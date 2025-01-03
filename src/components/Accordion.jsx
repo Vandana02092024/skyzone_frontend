@@ -7,7 +7,7 @@ export default function Accordion({id, title, children, actionTitle, actionValue
     }
 
 
-    return (
+    return ( 
         <div className={`accordion ${addClass}`}>
             <div className="accordion-item card">
                 

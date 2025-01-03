@@ -15,6 +15,8 @@ export default function Chart({chartData, settings}) {
             }
         }
 
+    
+
         var rotation = {
             fontSize:12
         }

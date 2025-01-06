@@ -6,8 +6,9 @@ import { encrypt, messagePop } from "../../utils/Common";
 import { ADDMANAGER } from "../../utils/Endpoints";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
+import { clearConfig } from "dompurify";
 
-function Add({refreshData, close}) {
+function Add({refreshData, close,currentLocation}) {    
     const apiRequest = useRequest();
 
     // FORM SUBMIT //
@@ -18,6 +19,7 @@ function Add({refreshData, close}) {
             email: encrypt(values.email),
             contact: encrypt(values.contact),
             designation: values.designation,
+            client_id:currentLocation
         }
 
       const response = await apiRequest({url:ADDMANAGER, method:"POST", data: nUser});
@@ -26,6 +28,7 @@ function Add({refreshData, close}) {
             refreshData(true);
             resetForm();
             close();
+            setOpen(false)
       }else{
             SweetAlert.error("Error", "There is some issue while adding user.")
       }

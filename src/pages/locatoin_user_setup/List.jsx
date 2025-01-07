@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { Skeleton } from "@mui/material";
 import Add from "./Add";
 import { FETCHMANAGER, LISTMANAGERS, UPDATEMANAGERSTATUS } from "../../utils/Endpoints";
-import { items_per_page, messagePop, status,decrypt } from "../../utils/Common";
+import { items_per_page, messagePop, status,decrypt, showErrorAlert } from "../../utils/Common";
 import Pagination from "../../components/Pagination";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
@@ -38,15 +38,15 @@ function List() {
   const {data: locationdt, loading: locationloading} = GetLocations();
 
   // DROPDOWNS CHANGE //
-  const dropDownChange = (e) => {
-    setCurrentLocation(e.target.value);
-    setRefresRecords(true);
-  }
+    const dropDownChange = (e) => {
+      setCurrentLocation(e.target.value);
+      setRefresRecords(true);
+    }
 
-  const dropDownChangeStatus = (e) => {
-    setCurrentStatus(e.target.value);
-    setRefresRecords(true);
-  };
+    const dropDownChangeStatus = (e) => {
+      setCurrentStatus(e.target.value);
+      setRefresRecords(true);
+    };
 
   // ONLOAD //
     useEffect(() => {
@@ -135,9 +135,9 @@ function List() {
       setLoad(false);
     }
 
+
      // UPDATE
      const handleStatusUpdate = async (list_id, status) => {
-      console.log("list_id", list_id, status)
       if (!list_id || !status) {
           console.error("No offerId or status available.");
           return;
@@ -158,28 +158,17 @@ function List() {
               },
           });
 
-          console.log("updateOfferStatus",updateOfferStatus.data)
-
           if (updateOfferStatus.data.length > 0) {
-              SweetAlert.fire({
-              title: "Updated!",
-              text: "Your status has been changed.",
-              icon: "success",
-              confirmButtonText: "OK",
-              }).then(() => {
+              messagePop(updateOfferStatus.data);
               setRefresRecords(true);
-              });
-
           } else {
               SweetAlert.error("Error!", "Failed to change offering status.");
           }
           } catch (error) {
-          SweetAlert.error("Error!", "Error to change offering status: " + error.message);
+            SweetAlert.error("Error!", "Error to change offering status: " + error.message);
           }
         }
       }
-
-    console.log("data",data)
 
   return (
     <div>
@@ -212,7 +201,9 @@ function List() {
                                 </div>
                                 <div className="col-md-3">
                                     <label className="form-label fs-12 fw-semibold">Location</label>
-                                    {((locationloading) || (!currentLocation)) ? 'Loading...' : locationdt && <FormDropdown onChange={dropDownChange} name="location" options={locationdt.data} default_value={currentLocation} classnm="form-select fs-12" />}
+                                    {((locationloading) || (!currentLocation)) ? 'Loading...' : locationdt && <FormDropdown 
+                                    onChange={dropDownChange} name="location" options={locationdt.data} 
+                                    default_value={currentLocation} classnm="form-select fs-12" />}
                                 </div>
                                 <div className="col-md-3">
                                     <label htmlFor="searchProduct" className="form-label fs-12 fw-semibold">Search
@@ -286,33 +277,6 @@ function List() {
         </div>
 
         <div className="row align-items-center">
-          {/* <div className="col-md-4 mb-2">
-            <div className="card border-0">
-              <div className="card-body hide-overflow">
-
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                  <a className="product-status product-active" title="Click to deactivate" href="/latest-offerings">Active</a>
-                  <div className="d-flex align-items-center">
-                    <a className="me-2 icon edit" data-bs-title="Edit" href="/latest-offerings">
-                      <i className="bi bi-pencil-square"></i>
-                    </a>
-                    <a className="icon delete" data-bs-title="Delete" href="/latest-offerings">
-                      <i className="bi bi-trash-fill"></i>
-                    </a>
-                  </div>
-                </div>
-
-                <div className="product_detail">
-                  <h1>Usman Rao</h1>
-                  <p><i className="bi bi-envelope-fill"></i> usman@rivette.ai</p>
-                  <p><i className="bi bi-phone-fill"></i> 123-765-987</p>
-                  <p><i className="bi bi-award-fill"></i> <b>Manager</b></p>
-                </div>
-
-              </div>
-            </div>
-          </div> */}
-
            {totalPages > 0 ?
                 <Pagination
                     totalPages={totalPages}

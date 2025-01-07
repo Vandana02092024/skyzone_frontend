@@ -28,6 +28,7 @@ import Products from "./pages/mobile_avail_products/Products";
 import CustomerQueries from "./pages/queries/CustomerQueries";
 import HolidayCalendar from "./pages/location_setup/HolidayCalendar";
 import List from "./pages/locatoin_user_setup/List";
+import GeneralQueries from "./pages/queries/GeneralQueries";
 
 function App() {
   const humanityRoute = [
@@ -215,6 +216,14 @@ function App() {
       element: (
         <Auth title="Products">
           <Products />
+        </Auth>
+      ),
+    },
+    {
+      path: "/general-queries",
+      element: (
+        <Auth title="General Queries">
+          <GeneralQueries />
         </Auth>
       ),
     },

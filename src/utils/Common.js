@@ -1,5 +1,6 @@
 import CryptoJS from "crypto-js";
 import SweetAlert from "../components/SweetAlert";
+import Swal from 'sweetalert2';
 
 const key = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_RIVETTE_KEY);
 const iv = CryptoJS.enc.Utf8.parse(process.env.REACT_APP_SECRET_IV);

@@ -234,10 +234,8 @@ export default function HolidayCalendar() {
 
 
     useEffect(() => {
-        console.log("data:", data);
         if (Array.isArray(data)) {
             data.forEach((holiday) => {
-                console.log("holiday", holiday);
                 if (holiday.holiday_desc === "Spring Break") {
                     setSpringBreak((prev) => [...prev, holiday]);
                 }else if(holiday.holiday_desc === "Summer Break"){

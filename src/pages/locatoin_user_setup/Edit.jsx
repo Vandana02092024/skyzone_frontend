@@ -5,7 +5,6 @@ import { encrypt, messagePop } from '../../utils/Common';
 import { UPDATEMANAGER } from "../../utils/Endpoints";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
-import { clearConfig } from "dompurify";
 import { managerValidation } from "../../utils/validationSchemas";
 
 export default function Edit({id, close, data, refreshData, alertMessage}) {  

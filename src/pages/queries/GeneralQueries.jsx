@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRequest } from '../../utils/Requests';
-import { decrypt, items_per_page} from '../../utils/Common';
+import { items_per_page} from '../../utils/Common';
 import { GENERALQUERIES } from '../../utils/Endpoints';
 import { Skeleton } from '@mui/material';
 import Accordion from '../../components/Accordion';

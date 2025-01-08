@@ -6,7 +6,6 @@ import { encrypt, messagePop } from "../../utils/Common";
 import { ADDMANAGER } from "../../utils/Endpoints";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
-import { clearConfig } from "dompurify";
 
 function Add({refreshData, close,currentLocation}) {    
     const apiRequest = useRequest();

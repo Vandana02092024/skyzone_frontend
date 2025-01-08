@@ -1,25 +1,22 @@
 import { useEffect, useState } from "react";
-// import { useRequest } from "../../utils/Requests"
-// import { LISTMANAGERS } from "../../utils/Endpoints";
 import GetLocations from "../../hooks/Locations";
 import FormDropdown from "../../components/FormDropdown";
 import { useLocation } from 'react-router-dom';
 import { Skeleton } from "@mui/material";
 import Add from "./Add";
 import { FETCHMANAGER, LISTMANAGERS, UPDATEMANAGERSTATUS } from "../../utils/Endpoints";
-import { items_per_page, messagePop, status,decrypt, showErrorAlert } from "../../utils/Common";
+import { items_per_page, messagePop, status,decrypt } from "../../utils/Common";
 import Pagination from "../../components/Pagination";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
 import { Link } from "react-router-dom";
 import Edit from "./Edit";
-import { clearConfig } from "dompurify";
 
 function List() {
   const location = useLocation();
   const [currentLocation, setCurrentLocation] = useState(false);
   const [isOpen, setIsOpen] = useState(false); // Add Manager Popup
-   const [isOpenId, setIsOpenId] = useState(false); // Edit User Popup
+  const [isOpenId, setIsOpenId] = useState(false); // Edit User Popup
   const [load, setLoad] = useState(false);
   const [refreshRecords, setRefresRecords] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,8 +103,8 @@ function List() {
         setRefresRecords(true);
       }
       else{
-          SweetAlert.error('Oops!', 'Something went wrong.')
-          setRefresRecords(false);
+        SweetAlert.error('Oops!', 'Something went wrong.')
+        setRefresRecords(false);
       }
     }
 
@@ -123,8 +120,6 @@ function List() {
               id: user?.data.id,
               fname:user?.data.fname,
               lname:user?.data.lname,
-              email:user?.data.email,
-              contact:user?.data.contact,
               email:user&&decrypt(user.data.email),
               contact:user&&decrypt(user.data.contact),
               designation:user?.data.designation
@@ -137,38 +132,38 @@ function List() {
 
 
      // UPDATE
-     const handleStatusUpdate = async (list_id, status) => {
-      if (!list_id || !status) {
-          console.error("No offerId or status available.");
-          return;
-      }
+    const handleStatusUpdate = async (list_id, status) => {
+    if (!list_id || !status) {
+        console.error("No offerId or status available.");
+        return;
+    }
 
-      const title = "Are you sure?";
-      const text  = `Are you sure you want to ${(status === 0 ? 'activate' : 'deactivate')} the offer?`;
-      const confirm = await SweetAlert.confirm(title, text);
+    const title = "Are you sure?";
+    const text  = `Are you sure you want to ${(status === 0 ? 'activate' : 'deactivate')} the offer?`;
+    const confirm = await SweetAlert.confirm(title, text);
 
-      if(confirm){
-          try {
-          const updateOfferStatus = await apiRequest({
-              url: UPDATEMANAGERSTATUS,
-              method: "post",
-              data: {
-              id: list_id,
-              status: status,
-              },
-          });
+    if(confirm){
+        try {
+        const updateOfferStatus = await apiRequest({
+            url: UPDATEMANAGERSTATUS,
+            method: "post",
+            data: {
+            id: list_id,
+            status: status,
+            },
+        });
 
-          if (updateOfferStatus.data.length > 0) {
-              messagePop(updateOfferStatus.data);
-              setRefresRecords(true);
-          } else {
-              SweetAlert.error("Error!", "Failed to change offering status.");
-          }
-          } catch (error) {
-            SweetAlert.error("Error!", "Error to change offering status: " + error.message);
-          }
+        if (updateOfferStatus.data.length > 0) {
+            messagePop(updateOfferStatus.data);
+            setRefresRecords(true);
+        } else {
+            SweetAlert.error("Error!", "Failed to change offering status.");
+        }
+        } catch (error) {
+          SweetAlert.error("Error!", "Error to change offering status: " + error.message);
         }
       }
+    }
 
   return (
     <div>

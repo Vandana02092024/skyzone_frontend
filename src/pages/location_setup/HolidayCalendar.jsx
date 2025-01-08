@@ -3,21 +3,24 @@ import FormDropdown from '../../components/FormDropdown'
 import GetLocations from '../../hooks/Locations';
 import DatePicker from '../../components/DatePicker';
 import { useFormik } from 'formik';
-import { holidayTypes } from '../../utils/Common';
 import { useRequest } from '../../utils/Requests';
 import { GETHOIDAYCAL } from '../../utils/Endpoints';
+import { holidayTypes } from '../../utils/Common';
 
 
-const TblBody = () => {
-    const {values, setFieldValue} = useFormik({
-        initialValues: {
-            startDate:'',
-            endDate:'',
-            holidayTypes: 1,
-            startTime:'',
-            endTime:''
-        }
-    })
+const TblBody = ({ data ={}, onDelete,title,index}) => {
+    const { values, setFieldValue } = useFormik({
+    initialValues: {
+            id: index,
+            startDate: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : '',
+            endDate: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : '',
+            holidayTypes: data.type || 1,
+            startTime: data.start_time && data.start_time !== "00:00" ? new Date(`${data.start_date}T${data.start_time}:00`) : '',
+            endTime: data.end_time && data.end_time !== "00:00" ? new Date(`${data.end_date}T${data.end_time}:00`) : '',
+        },
+        enableReinitialize: true,
+    });
+
 
     const startDateChange = (date) => setFieldValue("startDate", date);
     const endDateChange = (date) => setFieldValue("endDate", date);
@@ -31,24 +34,37 @@ const TblBody = () => {
                     <DatePicker value={values.startDate} onChange={startDateChange} name="startDate" />
                 </td>
                 <td>
-                    <DatePicker value={values.endDate} onChange={endDateChange} name="startDate" />
+                    <DatePicker value={values.endDate} onChange={endDateChange} name="endDate" />
                 </td>
                 <td>
-                    <FormDropdown options={holidayTypes} default_value={values.holidayTypes} classnm="form-select" />
+                    <FormDropdown
+                        options={holidayTypes}
+                        default_value={values.holidayTypes}
+                        classnm="form-select"
+                    />
                 </td>
                 <td>
-                    <DatePicker value={values.startTime} onChange={startTimeChange} timeOnly={true} />
+                    <DatePicker value={values.startTime} onChange={startTimeChange} timeOnly />
                 </td>
                 <td>
-                    <DatePicker value={values.endTime} onChange={endTimeChange} timeOnly={true} />
+                    <DatePicker value={values.endTime} onChange={endTimeChange} timeOnly />
                 </td>
-                <td><span className="icon lnk delete" data-bs-title="Delete"><i className="bi bi-trash-fill"></i></span></td>
+                <td>
+                    <span
+                        className="icon lnk delete"
+                        data-bs-title="Delete"
+                        onClick={() => onDelete(title, values.id)}
+                    >
+                        <i className="bi bi-trash-fill"></i>
+                    </span>
+                </td>
             </tr>
         </tbody>
-    )
-}
+    );
+};
 
-const BreakSection = ({title, imgPath}) => {
+
+const BreakSection = ({title, imgPath,data,onAdd, onDelete }) => {
     return (
         <div className="row mb-3">
             <div className="col-md-12">
@@ -73,10 +89,17 @@ const BreakSection = ({title, imgPath}) => {
                                         <th>Type</th>
                                         <th>Opening Time</th>
                                         <th>Closing Time</th>
-                                        <th><span className="me-2 icon lnk edit" data-bs-title="Add New"><i className="bi bi-plus-lg"></i></span></th>
+                                        <th><span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={() => onAdd(title)}><i className="bi bi-plus-lg"></i></span></th>
                                     </tr>
                                 </thead>
-                                    <TblBody />
+                                {data.length>0 ?(
+                                    data.map((item,index) => (
+                                        <TblBody key={item.id} data={item} title ={title} onDelete={onDelete} index={index}/>
+                                    ))
+                                ):(
+                                    <TblBody/>
+                                )
+                                }
                                 </table>
                             </div>
                             </div>
@@ -98,6 +121,14 @@ export default function HolidayCalendar() {
     const {data:locationdt, loading:locationloading} = GetLocations();
     const currentYear = new Date().getFullYear();
     const [Year, setYear] = useState(currentYear);
+    const [data,setData] = useState([]);
+    const[springBreak, setSpringBreak] = useState([ ]);
+    const[ summerBreak,setSummerBreak] = useState([]);
+    const[thanksgivingBreak,setThanksgivingBreak] = useState([]);
+    const[winterBreak,setWinterBreak] = useState([]);
+    const[christmasBreak, setChristmasBreak]= useState([]);
+    const [holiday, setHoliday] = useState([]);
+
     const years = [];
 
     // LOCATION CHANGE //
@@ -117,21 +148,113 @@ export default function HolidayCalendar() {
 
 
     useEffect(() => {
-
-        const getData = async () => {
-            
+        const getData = async () => {           
             const data = {client_id: currentLocation, year: Year};
             const response = await apiRequest({url: GETHOIDAYCAL, method: "post", data});
-            console.log("response", response)
+            if (Array.isArray(response.data)) {
+                setData(response.data);
+            } else {
+                setData([]); 
+            }
         }
-
         if(refreshData){
             setRefreshData(false);
             getData();
         }
 
+    }, [refreshData, currentLocation, Year,apiRequest])
 
-    }, [refreshData, currentLocation, Year])
+    const handleAddHoliday = (holidayType) => {
+        const newHoliday = {
+            id: 0, 
+            holiday_desc: holidayType,
+            start_date: '',
+            end_date: '',
+            type: 1,
+            start_time: '',
+            end_time: ''
+        };
+
+        const common = {
+            id:0,
+            event:'',
+            start_date:'',
+           start_time: '',
+            end_time: ''
+
+        }
+
+        if (holidayType === 'Spring Break') {
+            setSpringBreak([...springBreak, newHoliday]);
+        } else if (holidayType === 'Summer Break') {
+            setSummerBreak([...summerBreak, newHoliday]);
+        } else if (holidayType === 'Winter Break') {
+            setWinterBreak([...winterBreak, newHoliday]);
+        } else if (holidayType === 'Christmas') {
+            setChristmasBreak([...christmasBreak, newHoliday]);
+        } else if (holidayType === 'Thanks Giving Break') {
+            setThanksgivingBreak([...thanksgivingBreak, newHoliday]);
+        } else {
+            setHoliday([...holiday, common]);
+        }
+    };
+
+    const handleDeleteHoliday = (holidayType, ind) => {
+        if (holidayType === 'Spring Break') {
+            const NewList = springBreak.filter((list, index) => {
+                return (index !== ind && list)
+            })
+            setSpringBreak(NewList);
+        } else if (holidayType === 'Summer Break') {
+            const NewList = summerBreak.filter((list, index) => {
+                return (index !== ind && list)
+            })
+            setSummerBreak(NewList);
+        } else if (holidayType === 'Winter Break') {
+            const NewList = winterBreak.filter((list, index) => {
+                return (index !== ind && list)
+            })
+            setWinterBreak(NewList);
+        } else if (holidayType === 'Christmas') {
+            const NewList = christmasBreak.filter((list, index) => {
+                return (index !== ind && list)
+            })
+            setChristmasBreak(NewList);
+        } else if (holidayType === 'Thanks Giving Break') {
+            const NewList = thanksgivingBreak.filter((list, index) => {
+                return (index !== ind && list)
+            })
+            setThanksgivingBreak(NewList);
+        } else {
+            setHoliday(holiday.filter((list, index) =>{
+                return (index !==ind && list)
+            } ))
+        }
+    };
+
+
+    useEffect(() => {
+        console.log("data:", data);
+        if (Array.isArray(data)) {
+            data.forEach((holiday) => {
+                console.log("holiday", holiday);
+                if (holiday.holiday_desc === "Spring Break") {
+                    setSpringBreak((prev) => [...prev, holiday]);
+                }else if(holiday.holiday_desc === "Summer Break"){
+                    setSummerBreak((prev) => [...prev, holiday]);
+                }else if(holiday.holiday_desc === "Winter Break"){
+                    setWinterBreak((prev) => [...prev, holiday]);
+                }else if(holiday.holiday_desc==="Christmas"){
+                    setChristmasBreak((prev) => [...prev, holiday]);
+                } else if(holiday.holiday_desc==="Thanks Giving Break"){
+                    setThanksgivingBreak((prev) => [...prev, holiday]);
+                }else{
+                    setHoliday((prev)=>[...prev,holiday]);
+                }
+            });
+        }
+    }, [data]);
+    
 
 
     for (let i = 0; i < 6; i++) {
@@ -177,7 +300,7 @@ export default function HolidayCalendar() {
                         <div className="row align-items-center">
                             <div className="col-md-12">
                                 <p className="fs-12 fw-semibold mb-0">
-                                    <img src='./images/happy.png' />&nbsp; Holidays 
+                                    <img src='./images/happy.png' alt='' />&nbsp; Holidays 
                                 </p>
                             </div>
                         </div>
@@ -193,18 +316,60 @@ export default function HolidayCalendar() {
                                             <th>Type</th>
                                             <th>Opening Time</th>
                                             <th>Closing Time</th>
-                                            <th><span className="me-2 icon lnk edit" data-bs-title="Add New"><i className="bi bi-plus-lg"></i></span></th>
+                                            <th><span className="me-2 icon lnk edit" data-bs-title="Add New"  onClick={() => handleAddHoliday()}><i className="bi bi-plus-lg"></i></span></th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                    {holiday.length > 0 ? (
+                                        holiday.map((data, index) => (
+                                            <tr key={data.id || index}>
+                                                <td><input type='text' className='form-control' value={data.holiday_desc} /></td>
+                                                <td><input type='text' className='form-control' value={data.start_date} /></td>
+                                                <td>
+                                                    <FormDropdown
+                                                        options={holidayTypes}
+                                                        default_value={data.type}
+                                                        classnm="form-control"
+                                                    />
+                                                </td>
+                                                <td><input type='text' className='form-control' value={data.start_time} /></td>
+                                                <td><input type='text' className='form-control' value={data.end_time} /></td>
+                                                <td>
+                                                    <span 
+                                                        className="icon lnk delete" 
+                                                        data-bs-title="Delete" 
+                                                        onClick={() => handleDeleteHoliday(data.holiday_desc, index)}
+                                                    >
+                                                        <i className="bi bi-trash-fill"></i>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
                                         <tr>
-                                            <td><input type='text' className='form-control' /></td>
-                                            <td><input type='text' className='form-control' /></td>
-                                            <td><input type='text' className='form-control' /></td>
-                                            <td><input type='text' className='form-control' /></td>
-                                            <td><input type='text' className='form-control' /></td>
-                                            <td><span className="icon lnk delete" data-bs-title="Delete"><i className="bi bi-trash-fill"></i></span></td>
+                                            <td><input type='text' className='form-control' placeholder="" /></td>
+                                            <td><input type='text' className='form-control' placeholder="" /></td>
+                                            <td>
+                                                <FormDropdown
+                                                    options={holidayTypes}
+                                                    default_value="Default type"
+                                                    classnm="form-control"
+                                                />
+                                            </td>
+                                            <td><input type='text' className='form-control' placeholder="" /></td>
+                                            <td><input type='text' className='form-control' placeholder="" /></td>
+                                            <td>
+                                                <span 
+                                                    className="icon lnk delete" 
+                                                    data-bs-title="Delete" 
+                                                    onClick={() => handleDeleteHoliday("", 0)}
+                                                >
+                                                    <i className="bi bi-trash-fill"></i>
+                                                </span>
+                                            </td>
                                         </tr>
+                                    )}
+
                                     </tbody>
                                 </table>
                             </div>
@@ -217,11 +382,11 @@ export default function HolidayCalendar() {
             </div>
         </div>
 
-        <BreakSection title="Spring Break" imgPath="./images/break.png" />
-        <BreakSection title="Summer Break" imgPath="./images/sun-umbrella.png" />
-        <BreakSection title="Thanks Giving Break" imgPath="./images/leaves.png" />
-        <BreakSection title="Winter Break" imgPath="./images/snowman.png" />
-        <BreakSection title="Christmas Break" imgPath="./images/snowman.png" />
+        <BreakSection title="Spring Break" imgPath="./images/break.png"  data={springBreak}  onAdd={handleAddHoliday} onDelete={handleDeleteHoliday}/>
+        <BreakSection title="Summer Break" imgPath="./images/sun-umbrella.png"  data={summerBreak}  onAdd={handleAddHoliday} onDelete={handleDeleteHoliday}/>
+        <BreakSection title="Thanks Giving Break" imgPath="./images/leaves.png" data={thanksgivingBreak}  onAdd={handleAddHoliday} onDelete={handleDeleteHoliday}/>
+        <BreakSection title="Winter Break" imgPath="./images/snowman.png" data={winterBreak}  onAdd={handleAddHoliday} onDelete={handleDeleteHoliday} />
+        <BreakSection title="Christmas Break" imgPath="./images/snowman.png" data={christmasBreak}  onAdd={handleAddHoliday} onDelete={handleDeleteHoliday}  />
 
     </div>
   )

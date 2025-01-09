@@ -61,6 +61,7 @@ export default function GeneralQueries(){
             getCustomerQueries();
         }
     }, [RefresRecords, apiRequest, currentPage, search, currentLocation])
+
     
     useEffect(()=>{
         setRefresRecords(true);
@@ -153,11 +154,13 @@ export default function GeneralQueries(){
                                                     </tr>
                                                     <tr>
                                                         <th>&nbsp;</th>
+                                                        <th>Customer Details</th>
+                                                        <th>&nbsp;</th>
                                                     </tr>
                                                     <tr>
                                                         <td>&nbsp;</td>
                                                         <td>
-                                                            <b>Email: </b>{email} <br />
+                                                            {email} <br />
                                                         </td>
                                                         <td>
 

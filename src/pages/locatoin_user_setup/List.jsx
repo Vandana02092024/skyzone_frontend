@@ -22,7 +22,6 @@ function List() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(items_per_page);
   const [totalPages, setTotalPages] = useState(0);
-  const [allLocation, setAllLocations] = useState([]);
   const [data, setData] = useState([true]);
   const [currentStatus, setCurrentStatus] = useState(1);
   const [editData, setEditData] = useState(0);
@@ -55,8 +54,6 @@ function List() {
             }else{
                 setCurrentLocation(locationdt.data[0].value);
             }
-            setAllLocations(locationdt.data);
-            
         }
     }, [locationdt, locationloading, location.state]);
 

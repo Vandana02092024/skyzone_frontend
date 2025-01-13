@@ -26,7 +26,7 @@ import { IsSuperAdmin, IsUser } from "./utils/Common";
 import Scheduling from "./pages/cost_optimization/Scheduling";
 import Products from "./pages/mobile_avail_products/Products";
 import CustomerQueries from "./pages/queries/CustomerQueries";
-import HolidayCalendar from "./pages/location_setup/HolidayCalendar1";
+import HolidayCalendar from "./pages/location_setup/HolidayCalendar";
 import List from "./pages/locatoin_user_setup/List";
 import GeneralQueries from "./pages/queries/GeneralQueries";
 

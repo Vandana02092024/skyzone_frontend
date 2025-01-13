@@ -195,3 +195,12 @@ export const check_user_validation = (username) => {
     return [true];
   }
 }
+
+export const holidayCalendarValidation = yup.object().shape({
+  holiday_desc: yup.string().required("holiday description is required."),
+  start_date: yup.string().required("start date is required."),
+  end_date: yup.string().required("end date is required."),
+  type: yup.string().required("type is required."),
+  start_time: yup.string().required('start time is required'),
+  end_time: yup.string().required("end time is required."),
+})

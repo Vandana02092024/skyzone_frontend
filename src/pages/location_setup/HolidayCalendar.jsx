@@ -7,47 +7,207 @@ import { useRequest } from '../../utils/Requests';
 import { GETHOIDAYCAL } from '../../utils/Endpoints';
 import { holidayTypes } from '../../utils/Common';
 
+// const TblBody = ({ data ={}, onDelete,index,title }) => {
+//     const { values, setFieldValue } = useFormik({
+//     initialValues: {
+//         id: index ? index : data.id,
+//         holiday_desc:title,
+//         startDate: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : '',
+//         endDate: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : '',
+//         holidayTypes: data.type || 1,
+//         startTime: data.start_time && data.start_time !== "00:00" ? new Date(`${data.start_date}T${data.start_time}:00`) : '',
+//         endTime: data.end_time && data.end_time !== "00:00" ? new Date(`${data.end_date}T${data.end_time}:00`) : '',
+//     },
+//         enableReinitialize: true,
+//     });
+
+//     const startDateChange = (date) => { setFieldValue("startDate", date);}
+//     const endDateChange = (date) => { setFieldValue("endDate", date);}
+//     const startTimeChange = (date) => { setFieldValue("startTime", date);}
+//     const endTimeChange = (date) => { setFieldValue("endTime", date); }
+//     const holidayTypesChange = (event) => { 
+//         const value = event.target.value; 
+//         setFieldValue("holidayTypes", value); 
+//     };
+
+//     return (
+//         <tbody>
+//             <tr>
+//                 <td>
+//                     <DatePicker value={values.startDate} onChange={startDateChange} name="startDate" />
+//                 </td>
+//                 <td>
+//                     <DatePicker value={values.endDate} onChange={endDateChange} name="endDate" />
+//                 </td>
+//                 <td>
+//                     <FormDropdown
+//                         options={holidayTypes}
+//                         default_value={values.holidayTypes}
+//                         classnm="form-select"
+//                         onChange={holidayTypesChange}
+//                     />
+//                 </td>
+//                 <td>
+//                     <DatePicker value={values.startTime} onChange={startTimeChange} timeOnly />
+//                 </td>
+//                 <td>
+//                     <DatePicker value={values.endTime} onChange={endTimeChange} timeOnly />
+//                 </td>
+//                 <td>
+//                     <span
+//                         className="icon lnk delete"
+//                         data-bs-title="Delete"
+//                         onClick={() => onDelete(values.id)}
+//                     >
+//                         <i className="bi bi-trash-fill"></i>
+//                     </span>
+//                 </td>
+//             </tr> 
+//         </tbody>
+//     );
+// };
+
+// const BreakSection = ({title, imgPath,data}) => {
+//     const [values, setValues] = useState([]);
+
+//     const handleDeleteHoliday = (ind) => {
+//         const NewList = values.filter((list, index) => {
+//             return (index !== ind && list)
+//         })
+//         setValues(NewList);
+//     };
+
+//     const newHoliday = useMemo(() => [{
+//         id: 0,
+//         holiday_desc: title,
+//         start_date: '',
+//         end_date: '',
+//         type: 1,
+//         start_time: '',
+//         end_time: ''
+//     }], [title]);
 
 
-const TblBody = ({ data ={}, onDelete,index}) => {
+//     useEffect(() => {
+//         setValues(data);
+//     }, [data]);
+
+//     useEffect(() => {
+//         if(values.length === 0)
+//             setValues(newHoliday);
+//     }, [values,newHoliday])
+
+//     const AddRow = () => {
+//         setValues((prev) => [...prev,  newHoliday]);
+//     }
+
+//     // const updatedFieldsDone = { ...values };
+
+//     // Object.keys(values).forEach((key) => {
+//     //     if (values[key] !== data[key]) {
+//     //         updatedFieldsDone[key] = values[key];
+//     //     }
+//     // });
+//     // updatedFieldsDone.id = data.id || 0;
+
+//     // setUpdatedRecordsDone(updatedFieldsDone);
+
+//     // console.log("updatedRecords", updatedRecordsDone);
+
+//     return (
+//         <div className="row mb-3">
+//             <div className="col-md-12">
+//                 <div className="card border-0">
+//                     <div className="card-body">
+//                         <div className="row align-items-center">
+//                             <div className="col-md-12">
+//                                 <p className="fs-12 fw-semibold mb-0">
+//                                     <img src={imgPath} alt={title} />&nbsp; {title}
+//                                 </p>
+//                             </div>
+//                         </div>
+
+//                         <div className="row align-items-center mt-10">
+//                             <div className="col-md-12">
+//                             <div className="ss-table table-responsive">
+//                                 <table className="table">
+//                                 <thead>
+//                                     <tr>
+//                                         <th>Start Date</th>
+//                                         <th>End Date</th>
+//                                         <th>Type</th>
+//                                         <th>Opening Time</th>
+//                                         <th>Closing Time</th>
+//                                         <th><span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={() => AddRow(title)}><i className="bi bi-plus-lg"></i></span></th>
+//                                     </tr>
+//                                 </thead>
+//                                 {values.length > 0 &&
+//                                     values.map((item,index) => (
+//                                         <TblBody key={item.id} data={item} title ={title} onDelete={handleDeleteHoliday} index={index}
+//                                         />
+//                                     ))
+//                                 }
+//                                 </table>
+//                             </div>
+//                             </div>
+                            
+//                         </div>
+
+//                     </div>
+//                 </div>
+//             </div>
+//         </div>
+//     )
+// }
+
+const TblBody = ({ data = {}, onDelete, onUpdate, index, title }) => {
     const { values, setFieldValue } = useFormik({
-    initialValues: {
-            id: index,
-            startDate: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : '',
-            endDate: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : '',
-            holidayTypes: data.type || 1,
-            startTime: data.start_time && data.start_time !== "00:00" ? new Date(`${data.start_date}T${data.start_time}:00`) : '',
-            endTime: data.end_time && data.end_time !== "00:00" ? new Date(`${data.end_date}T${data.end_time}:00`) : '',
+        initialValues: {
+            id: index ? index : data.id,
+            holiday_desc: title,
+            start_date: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : '',
+            end_date: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : '',
+            type: data.type || 1,
+            start_time: data.start_time && data.start_time !== "00:00" ? new Date(`${data.start_date}T${data.start_time}:00`) : '',
+            end_time: data.end_time && data.end_time !== "00:00" ? new Date(`${data.end_date}T${data.end_time}:00`) : '',
         },
         enableReinitialize: true,
     });
 
-    const startDateChange = (date) => setFieldValue("startDate", date);
-    const endDateChange = (date) => setFieldValue("endDate", date);
-    const startTimeChange = (date) => setFieldValue("startTime", date);
-    const endTimeChange = (date) => setFieldValue("endTime", date);
+    const startDateChange = (date) => { setFieldValue("start_date", date); }
+    const endDateChange = (date) => { setFieldValue("end_date", date); }
+    const startTimeChange = (date) => { setFieldValue("start_time", date); }
+    const endTimeChange = (date) => { setFieldValue("end_time", date); }
+    const holidayTypesChange = (event) => { 
+        const value = event.target.value; 
+        setFieldValue("type", value); 
+    };
+    useEffect(() => {
+        onUpdate(values);
+    }, [values]);
 
     return (
         <tbody>
             <tr>
                 <td>
-                    <DatePicker value={values.startDate} onChange={startDateChange} name="startDate" />
+                    <DatePicker value={values.start_date} onChange={startDateChange} name="start_date" />
                 </td>
                 <td>
-                    <DatePicker value={values.endDate} onChange={endDateChange} name="endDate" />
+                    <DatePicker value={values.end_date} onChange={endDateChange} name="end_date" />
                 </td>
                 <td>
                     <FormDropdown
                         options={holidayTypes}
-                        default_value={values.holidayTypes}
+                        default_value={values.type}
                         classnm="form-select"
+                        onChange={holidayTypesChange}
                     />
                 </td>
                 <td>
-                    <DatePicker value={values.startTime} onChange={startTimeChange} timeOnly />
+                    <DatePicker value={values.start_time} onChange={startTimeChange} timeOnly />
                 </td>
                 <td>
-                    <DatePicker value={values.endTime} onChange={endTimeChange} timeOnly />
+                    <DatePicker value={values.end_time} onChange={endTimeChange} timeOnly />
                 </td>
                 <td>
                     <span
@@ -63,19 +223,8 @@ const TblBody = ({ data ={}, onDelete,index}) => {
     );
 };
 
-
-const BreakSection = ({title, imgPath,data}) => {
-
-    const [values, setValues] = useState([]);
-
-    const handleDeleteHoliday = (ind) => {
-        const NewList = values.filter((list, index) => {
-            return (index !== ind && list)
-        })
-        setValues(NewList);
-    };
-
-    const newHoliday = useMemo(() => [{
+const BreakSection = ({ title, imgPath, data, onAddOrUpdate, onDelete }) => {
+    const [values, setValues] = useState(data.length > 0 ? data : [{
         id: 0,
         holiday_desc: title,
         start_date: '',
@@ -83,21 +232,48 @@ const BreakSection = ({title, imgPath,data}) => {
         type: 1,
         start_time: '',
         end_time: ''
-    }], [title]);
+    }]); 
 
     useEffect(() => {
-        setValues(data);
-    }, [data]);
+        setValues(data.length > 0 ? data : [{
+            id: 0,
+            holiday_desc: title,
+            start_date: '',
+            end_date: '',
+            type: 1,
+            start_time: '',
+            end_time: ''
+        }]);
+    }, [data, title]);
 
-    useEffect(() => {
-        if(values.length === 0)
-            setValues(newHoliday);
-    }, [values,newHoliday])
+    const handleDeleteHoliday = (ind) => {
+        const NewList = values.filter((list, index) => {
+            return (index !== ind && list)
+        })
+        setValues(NewList);
+        onDelete(NewList);
+    };
 
-    const AddRow = () => {
-        setValues((prev) => [...prev,  newHoliday]);
-    }
+    const handleUpdateHoliday = (updatedHoliday) => {
+        // console.log("updatedHoliday", updatedHoliday);
+        const updatedList = values.map((item) =>
+            item.id === updatedHoliday.id ? {...updatedHoliday}: item 
+        );
+        // console.log("updatedList",updatedList);
+        setValues(updatedList);
+    };
 
+    const handleAddHoliday = () => {
+        setValues((prev) => [...prev, {
+            id: 0,
+            holiday_desc: title,
+            start_date: '',
+            end_date: '',
+            type: 1,
+            start_time: '',
+            end_time: ''
+        }]);
+    };
 
     return (
         <div className="row mb-3">
@@ -114,77 +290,83 @@ const BreakSection = ({title, imgPath,data}) => {
 
                         <div className="row align-items-center mt-10">
                             <div className="col-md-12">
-                            <div className="ss-table table-responsive">
-                                <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
-                                        <th>Type</th>
-                                        <th>Opening Time</th>
-                                        <th>Closing Time</th>
-                                        <th><span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={() => AddRow(title)}><i className="bi bi-plus-lg"></i></span></th>
-                                    </tr>
-                                </thead>
-                                {values.length > 0 &&
-                                    values.map((item,index) => (
-                                        <TblBody key={item.id} data={item} title ={title} onDelete={handleDeleteHoliday} index={index}/>
-                                    ))
-                                }
-                                </table>
+                                <div className="ss-table table-responsive">
+                                    <table className="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Type</th>
+                                                <th>Opening Time</th>
+                                                <th>Closing Time</th>
+                                                <th><span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={handleAddHoliday}><i className="bi bi-plus-lg"></i></span></th>
+                                            </tr>
+                                        </thead>
+                                        {values.length > 0 &&
+                                            values.map((item, index) => (
+                                                <TblBody 
+                                                    key={item.id} 
+                                                    data={item} 
+                                                    title={title} 
+                                                    onDelete={handleDeleteHoliday} 
+                                                    onUpdate={handleUpdateHoliday}
+                                                    index={index}
+                                                />
+                                            ))
+                                        }
+                                    </table>
+                                </div>
                             </div>
-                            </div>
-                            
                         </div>
 
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
-
+    );
+};
 
 const TblBodyInput = ({ data ={}, onDelete,index}) => {
-    const { values, setFieldValue } = useFormik({
+    const { values, setFieldValue, handleChange} = useFormik({
     initialValues: {
-    id: index,
+    id: index?index :0,
     event: data.holiday_desc || '',
-    startDate: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : null,
-    endDate: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : null,
-    holidayTypes: data.type || 1,
-    startTime: data.start_time && data.start_time !== "00:00" && data.start_date 
+    start_date: data.start_date && data.start_date !== "0000-00-00" ? new Date(data.start_date) : null,
+    end_date: data.end_date && data.end_date !== "0000-00-00" ? new Date(data.end_date) : null,
+    type: data.type || 1,
+    start_time: data.start_time && data.start_time !== "00:00" && data.start_date 
         ? new Date(`${data.start_date}T${data.start_time}:00`) 
         : null,
-    endTime: data.end_time && data.end_time !== "00:00" && data.start_date 
+    end_time: data.end_time && data.end_time !== "00:00" && data.start_date 
         ? new Date(`${data.start_date}T${data.end_time}:00`) 
         : null,
     },
-
     });
-    const startDateChange = (date) => setFieldValue("startDate", date);
-    const startTimeChange = (date) => setFieldValue("startTime", date);
-    const endTimeChange = (date) => setFieldValue("endTime", date);
+
+    const startDateChange = (date) => setFieldValue("start_date", date);
+    const startTimeChange = (date) => setFieldValue("start_time", date);
+    const endTimeChange = (date) => setFieldValue("end_time", date);
 
     return (
         <tbody>
             <tr>
-                <td><input type='text' className='form-control' value={values.event} name='event' /></td>
+                <td><input type='text' className='form-control' value={values.event} name='event' onChange={handleChange} /></td>
                 <td>
-                    <DatePicker value={values.startDate} onChange={startDateChange} name="startDate"/>
+                    <DatePicker value={values.start_date} onChange={startDateChange} name="start_date"/>
                 </td>
                 <td>
                     <FormDropdown
                         options={holidayTypes}
                         default_value={values.holidayTypes}
                         classnm="form-select"
+                        onChange={(e) => setFieldValue("holidayTypes", e.target.value)}
                     />
                 </td>
                 <td>
-                    <DatePicker value={values.startTime} onChange={startTimeChange} timeOnly />
+                    <DatePicker value={values.start_time} onChange={startTimeChange} timeOnly />
                 </td>
                 <td>
-                    <DatePicker value={values.endTime} onChange={endTimeChange} timeOnly />
+                    <DatePicker value={values.end_time} onChange={endTimeChange} timeOnly />
                 </td>
                 <td>
                     <span
@@ -199,7 +381,6 @@ const TblBodyInput = ({ data ={}, onDelete,index}) => {
         </tbody>
     );
 };
-
 
 export default function HolidayCalendar() {
 
@@ -219,30 +400,6 @@ export default function HolidayCalendar() {
     const [holiday, setHoliday] = useState([]);
 
     const [holidaysValues, setHolidaysValues] = useState([]);
-
-    const common = useMemo(() => [{
-        id: 0,
-        holiday_desc: '',
-        event: '',
-        start_date: '',
-        type: 1,
-        start_time: '',
-        end_time: ''
-    }], []);
-
-    useEffect(() => {
-        setHolidaysValues(holiday);
-    }, [holiday]);
-
-    useEffect(() => {
-        if(holidaysValues.length === 0)
-            setHolidaysValues(common);
-    }, [holidaysValues,common])
-
-    const handleAddHoliday = () => {
-        setHolidaysValues((prev) => [...prev, common]);
-    }
-
     const years = [];
 
     // LOCATION CHANGE //
@@ -259,7 +416,6 @@ export default function HolidayCalendar() {
         }
 
     }, [locationdt, locationloading]);
-
 
     useEffect(() => {
         const getData = async () => {           
@@ -303,8 +459,9 @@ export default function HolidayCalendar() {
         setHolidaysValues(holidaysValues.filter((list, index) =>{
             return (index !==ind && list)
         } ))
-    };
-
+    }; 
+    
+    
     for (let i = 0; i < 6; i++) {
         years.push({id: Year - i, label: Year - i, value: Year - i});
     }
@@ -314,6 +471,39 @@ export default function HolidayCalendar() {
         setRefreshData(true);
     }
 
+    const common = useMemo(() => [{
+        id: 0,
+        holiday_desc: '',
+        event: '',
+        start_date: '',
+        type: 1,
+        start_time: '',
+        end_time: ''
+    }], []);
+
+    useEffect(() => {
+        setHolidaysValues(holiday);
+    }, [holiday]);
+
+    useEffect(() => {
+        if(holidaysValues.length === 0)
+            setHolidaysValues(common);
+    }, [holidaysValues,common])
+
+    const handleAddHoliday = () => {
+        setHolidaysValues((prev) => [...prev, common]);
+    }
+
+    console.log("data",data)
+
+    
+    const handleAddOrUpdate = (updatedData) => {
+        setSpringBreak(updatedData.filter(item => item.holiday_desc === "Spring Break"));
+        setSummerBreak(updatedData.filter(item => item.holiday_desc === "Summer Break"));
+        setWinterBreak(updatedData.filter(item => item.holiday_desc === "Winter Break"));
+        setChristmasBreak(updatedData.filter(item => item.holiday_desc === "Christmas Break"));
+        setThanksgivingBreak(updatedData.filter(item => item.holiday_desc === "Thanks Giving Break"));
+    };
   return (
     <div>
         <div className="row mb-3">
@@ -388,11 +578,13 @@ export default function HolidayCalendar() {
             </div>
         </div>
 
-        <BreakSection title="Spring Break" imgPath="./images/break.png"  data={springBreak}  onAdd={setSpringBreak} onDelete={setSpringBreak}/>
-        <BreakSection title="Summer Break" imgPath="./images/sun-umbrella.png"  data={summerBreak}  onAdd={setSummerBreak} onDelete={setSummerBreak}/>
-        <BreakSection title="Thanks Giving Break" imgPath="./images/leaves.png" data={thanksgivingBreak}  onAdd={setThanksgivingBreak} onDelete={setThanksgivingBreak}/>
-        <BreakSection title="Winter Break" imgPath="./images/snowman.png" data={winterBreak}  onAdd={setWinterBreak} onDelete={setWinterBreak} />
-        <BreakSection title="Christmas Break" imgPath="./images/snowman.png" data={christmasBreak}  onAdd={setChristmasBreak} onDelete={setChristmasBreak}  />
+        
+
+        <BreakSection title="Spring Break" imgPath="./images/break.png"  data={springBreak}  onAddOrUpdate={handleAddOrUpdate}  onAdd={setSpringBreak} onDelete={setSpringBreak} currentLocation={currentLocation} year={Year}/>
+        <BreakSection title="Summer Break" imgPath="./images/sun-umbrella.png"  data={summerBreak}   onAddOrUpdate={handleAddOrUpdate}  onAdd={setSummerBreak} onDelete={setSummerBreak} currentLocation={currentLocation} year={Year}/>
+        <BreakSection title="Thanks Giving Break" imgPath="./images/leaves.png" data={thanksgivingBreak}  onAddOrUpdate={handleAddOrUpdate}   onAdd={setThanksgivingBreak} onDelete={setThanksgivingBreak} currentLocation={currentLocation} year={Year}/>
+        <BreakSection title="Winter Break" imgPath="./images/snowman.png" data={winterBreak}   onAddOrUpdate={handleAddOrUpdate}  onAdd={setWinterBreak} onDelete={setWinterBreak} currentLocation={currentLocation} year={Year} />
+        <BreakSection title="Christmas Break" imgPath="./images/snowman.png" data={christmasBreak}  onAddOrUpdate={handleAddOrUpdate}   onAdd={setChristmasBreak} onDelete={setChristmasBreak} currentLocation={currentLocation} year={Year}/>
 
     </div>
   )

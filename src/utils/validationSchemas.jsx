@@ -204,3 +204,53 @@ export const holidayCalendarValidation = yup.object().shape({
   start_time: yup.string().required('start time is required'),
   end_time: yup.string().required("end time is required."),
 })
+
+export const AddLocationsValidations = yup.object().shape({
+  client_name: yup.string().required("holiday description is required."),
+  location: yup.string().required("location is required."),
+  latitude: yup.string().required("latitude is required."),
+  longitude: yup.string().required("longitude is required."),
+  address: yup.string().required('address is required'),
+  client_code: yup.string().required("client_code is required."),
+  humanity_username: yup.string().required("Username is required.")
+    .matches(/^[a-z0-9]+$/, 'Username should only contain lowercase letters and numbers without spaces')
+    .min(3, 'Username must be at least 3 characters long')
+    .max(20, 'Username cannot be longer than 20 characters'),
+  humanity_password: yup
+    .string()
+    .min(8, 'Password must be at least 8 characters long')
+    .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .matches(/[0-9]/, 'Password must contain at least one number')
+    .required('Password is required'),
+    version: yup.string().required("version is required."),
+    waiver_text: yup.string().required("waiver text is required."),
+    topic_name: yup.string().required('topic name is required'),
+    customerTimezone: yup.string().required("This field is required."),
+    can_access: yup.string().required("This access field is required."),
+    country_type: yup.string().required("This country type field is required."),
+    website: yup.string().required("website is required."),
+  stripe_account_id: yup.string().required("stripe account id is required."),
+  client_email: yup.string().email("Please enter a valid email address.").required("Client Email is required."),
+  order_email: yup.string().email("Please enter a valid email address.").required("order Email is required."),
+  reply_to: yup.string().email("Please enter a valid email address.").required("Reply Email is required."),
+  phone_number: yup.string().matches(/^[0-9]{10}$/, 'Contact number must be exactly 10 digits').required('Contact number is required'),
+  // role: yup.string().required("Please select user role."),
+});
+
+export const check_location_validation = (location) => {
+  if (!location) {
+    return [false, 'location is required.'];
+  } else {
+    return [true];
+  }
+}
+
+export const sendReply =  yup.object({
+  reply: yup.string().required("Reply is required"),
+});
+
+export const imageValidation =  yup.object({
+  image: yup.string().required("image is required"),
+});
+

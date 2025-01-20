@@ -49,7 +49,6 @@ export default function Pagination({totalPages, currentPage, setCurrentPage, ref
                   className="page-link"
                   onClick={() => paginate(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  style={{ border: "none" }}
                 >
                   Next
                 </button>

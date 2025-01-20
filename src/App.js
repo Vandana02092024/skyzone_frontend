@@ -29,6 +29,10 @@ import CustomerQueries from "./pages/queries/CustomerQueries";
 import HolidayCalendar from "./pages/location_setup/HolidayCalendar";
 import List from "./pages/locatoin_user_setup/List";
 import GeneralQueries from "./pages/queries/GeneralQueries";
+import LocationSetup from "./pages/location_setup/LocationSetup";
+import AddLocations from "./pages/location_setup/AddLocations";
+import Queries from "./pages/queries/ViewQueries";
+import KitchenSlider from "./pages/slider/KitchenSlider";
 
 function App() {
   const humanityRoute = [
@@ -188,6 +192,14 @@ function App() {
       ),
     },
     {
+      path: "/menu-slider",
+      element: (
+        <Auth title="Slider Image">
+          <KitchenSlider />
+        </Auth>
+      ),
+    },
+    {
       path: "/add-menu-items",
       element: (
         <Auth title="Menu Items">
@@ -224,6 +236,30 @@ function App() {
       element: (
         <Auth title="General Queries">
           <GeneralQueries />
+        </Auth>
+      ),
+    },
+    {
+      path: "/location-setup",
+      element: (
+        <Auth title="Locations Setup">
+          <LocationSetup />
+        </Auth>
+      ),
+    },
+    {
+      path: "/add-locations",
+      element: (
+        <Auth title="Add Locations">
+          <AddLocations />
+        </Auth>
+      ),
+    },
+    {
+      path: "/view-queries",
+      element: (
+        <Auth title="View Queries">
+          <Queries />
         </Auth>
       ),
     },

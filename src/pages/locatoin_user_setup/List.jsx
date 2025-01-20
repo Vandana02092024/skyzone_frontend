@@ -112,7 +112,6 @@ function List() {
       var singleRec = {};
       if(id !== 'undefined'){
           const user = await apiRequest({url:FETCHMANAGER, method:"get", params: {id: id}});
-
           singleRec = {
               id: user?.data.id,
               fname:user?.data.fname,
@@ -170,7 +169,7 @@ function List() {
             <div className="text-end mb-3">              
                 <Skeleton variant="rectangular" width="100%" height={80} className="skeleton-custom text-end" />
             </div>
-                <Skeleton variant="rectangular" width="100%" height={100} className="skeleton-custom" />
+              <Skeleton variant="rectangular" width="100%" height={100} className="skeleton-custom" />
         </> 
         : locationdt &&
         <>

@@ -102,6 +102,16 @@ export const status = [
   { id: 2, label: "Inactive", value: "0" },
 ];
 
+export const country_type = [
+  { id: 1, label: "Canada", value: "0" },
+  { id: 2, label: "USA", value: "1" },
+];
+
+export const can_access = [
+  { id: 1, label: "Yes", value: "0" },
+  { id: 2, label: "No", value: "1" },
+];
+
 // function to get the token from local storage
 export const getToken = () => {
   const user = JSON.parse(localStorage.getItem("user")) || null;
@@ -157,10 +167,12 @@ const getRole = () => {
 const IsSuperAdmin = getRole() === "1" ? true : false;
 const IsAdmin = getRole() === "2" ? true : false;
 const IsUser = getRole() === "3" ? true : false;
+const IsAgent = getRole() === "4" ? true : false;
 
 export const IsRoleSuperAdmin = (role) => (role === "1" ? true : false);
 export const IsRoleAdmin = (role) => (role === "2" ? true : false);
 export const IsRoleUser = (role) => (role === "3" ? true : false);
+export const IsRoleAgent= (role) => (role === "4" ? true : false);
 
 const user_role = () => {
   if (IsSuperAdmin) {
@@ -168,6 +180,7 @@ const user_role = () => {
       { id: 1, value: 1, label: "Superadmin" },
       { id: 2, value: 2, label: "Admin" },
       { id: 3, value: 3, label: "User" },
+      { id: 4, value: 4, label: "Call Center Agent" },
     ];
   } else {
     return [
@@ -180,7 +193,7 @@ const user_role = () => {
 export const user_roles = user_role();
 
 // Export the function
-export { decrypt, getRole, IsAdmin, IsSuperAdmin, IsUser };
+export { decrypt, getRole, IsAdmin, IsSuperAdmin, IsUser,IsAgent };
 
 // Encrypt function
 export const encrypt = (plaintext) => {

@@ -8,6 +8,7 @@ import moment from 'moment';
 import Pagination from '../../components/Pagination';
 import FormDropdown from '../../components/FormDropdown';
 import GetLocations from '../../hooks/Locations';
+import DatePicker from "../../components/DatePicker.jsx";
 
 export default function GeneralQueries(){
     const [RefresRecords, setRefresRecords] = useState(true);
@@ -17,6 +18,8 @@ export default function GeneralQueries(){
     const apiRequest = useRequest();
     const {data:locationdt, loading:locationloading} = GetLocations();
     const [currentLocation, setCurrentLocation] = useState(false);
+    const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0] );
+    const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
 
     // PAGE AND ITEMS SETTINGS //
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,6 +36,18 @@ export default function GeneralQueries(){
         setSearch(e.target.value);
         setRefresRecords(true);
     }
+
+    const handleApplyFilter = () => {
+        setFromDate(fromDate);
+        setToDate(toDate);
+        setRefresRecords(true);
+    };
+    
+    const handleClearFilter = () => {
+        setFromDate(new Date().toISOString().split("T")[0]);
+        setToDate(new Date().toISOString().split("T")[0]);
+        setRefresRecords(true);
+    };
     
     // COMPONENT MOUNTING 
     useEffect(()=>{
@@ -88,18 +103,9 @@ export default function GeneralQueries(){
                                     <div className="col-md-3">
                                         <label className="form-label fs-12 fw-semibold">Location</label>
                                         {((locationloading)) 
-                                            ? 
-                                                'Loading...' 
-                                            : 
+                                            ?  'Loading...'  : 
                                             locationdt && 
-                                                <FormDropdown 
-                                                    onChange={dropDownChange} 
-                                                    name="location" 
-                                                    options={locationdt.data} 
-                                                    default_value={currentLocation} 
-                                                    classnm="form-select fs-12"
-                                                    default_option={true} 
-                                                />
+                                                <FormDropdown onChange={dropDownChange} name="location"   options={locationdt.data}  default_value={currentLocation}  classnm="form-select fs-12" default_option={true} />
                                         }
                                     </div>
                                     <div className="col-md-3">
@@ -108,23 +114,55 @@ export default function GeneralQueries(){
                                 />
                                     </div>
                                 </div>
+                                <div className="fs-12 payments-filters">
+                                    <div className="me-3">
+                                    <label htmlFor="fromDate" className="form-label">
+                                        From Date
+                                    </label>
+                                    <div>
+                                        <DatePicker
+                                        value={fromDate}
+                                        onChange={(date) => setFromDate(date)}
+                                        minDate={false} 
+                                        name="startDate" 
+                                        />
+                                    </div>
+                                    </div>
+                                    <div className="me-3">
+                                    <label htmlFor="toDate" className="form-label">
+                                        To Date
+                                    </label>
+                                    <div>
+                                    <DatePicker
+                                        value={toDate}
+                                        onChange={(date) => setToDate(date)}
+                                        minDate={false} 
+                                        name="startDate" 
+                                    />
+                                    </div>
+                                    </div>
+                                    <div className="me-3 mt-3 pt-md-1">
+                                    <button className="ss_btn" onClick={handleApplyFilter}>
+                                        Apply Filter
+                                    </button>
+                                    </div>
+                                    <div className="me-3 mt-3 pt-md-1">
+                                    <button className="refreshbtn" onClick={handleClearFilter}>
+                                        Clear Filter
+                                    </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             }
-
             <div className="card border-0 boxShadow">
                 <div className="card-body">
-                    
                     <div className="row">
-
                         <div className="col-md-12 mb-3">
-
                         {loading ? <Skeleton variant="rectangular" width="100%" height={400} className="skeleton-custom" />
-                
                         :
-
                         <>
                             {data?.map(query => {
                                 const email = query.user;
@@ -142,8 +180,8 @@ export default function GeneralQueries(){
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            <i className="bi bi-question-circle-fill">
-                                                            </i> </td>
+                                                            <i className="bi bi-question-circle-fill"></i>
+                                                        </td>
                                                         <td className='wrap-text pd-15 fs-15'>
                                                             {query.message}
                                                         </td>
@@ -163,7 +201,6 @@ export default function GeneralQueries(){
                                                             {email} <br />
                                                         </td>
                                                         <td>
-
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -173,25 +210,19 @@ export default function GeneralQueries(){
                                 )
                             })}
                         </>
-
                         }
-
                         {totalPages > 0 ?
                             <Pagination
-                                totalPages={totalPages}
-                                currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                refreshRecords={setRefresRecords}
-                            />
+                             totalPages={totalPages}
+                            currentPage={currentPage}
+                            setCurrentPage={setCurrentPage}
+                            refreshRecords={setRefresRecords} />
                         :
-                            <Skeleton variant="rectangular" width="100%" height={20} className="skeleton-custom text-end"/>
-                        }
-                            
+                        <Skeleton variant="rectangular" width="100%" height={20} className="skeleton-custom text-end"/>}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     )
 }

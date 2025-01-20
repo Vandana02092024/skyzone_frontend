@@ -1,7 +1,7 @@
 import React from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 
-const TinyMCEEditor = ({ value, onEditorChange }) => {
+const TinyMCEEditor = ({ value, onEditorChange, height }) => {
   const editor_key = process.env.REACT_APP_EDITOR_KEY;
   return (
     <>
@@ -9,7 +9,7 @@ const TinyMCEEditor = ({ value, onEditorChange }) => {
       apiKey={editor_key}
       onEditorChange={onEditorChange}
       init={{
-        height: 500,
+        height: height,
         menubar: false,
         plugins:
           "advlist autolink lists link image charmap preview anchor emoticons searchreplace visualblocks code fullscreen insertdatetime media table  help wordcount",

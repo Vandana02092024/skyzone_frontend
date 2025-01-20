@@ -49,6 +49,7 @@ export default function Edit({id, close, data, refreshData, alertMessage}) {
             contact: data.contact,
             designation: data.designation
         },
+        enableReinitialize: true,
         validationSchema: managerValidation,
         onSubmit
     })

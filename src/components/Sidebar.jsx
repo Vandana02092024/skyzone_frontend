@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { IsSuperAdmin, IsUser } from '../utils/Common';
+import { IsAgent, IsSuperAdmin, IsUser } from '../utils/Common';
 
 export default function Sidebar() {
     const currentPath = window.location.pathname;
@@ -38,47 +38,67 @@ export default function Sidebar() {
                 </Link>
             </div>
 
-            <span className="toggle-sidebar-btn" onMouseOver={() => toggleIcon()} onMouseOut={() => setIcon("bi bi-list")} onClick={toggleSidebar} ><i className={icon}></i></span>
-            <li className="mb-2 nav-item">
-                <Link to="/stripe" className={`w-100 nav-link ${(currentPath === '/stripe') ? `active` : ''}`}>
-                    <i className="bi bi-plugin"></i>
-                    <span className="ms-2">Stripe Integration</span>
-                </Link>
-            </li>
-            <li className="mb-2 nav-item">
-                <Link to="/payments" className={`w-100 nav-link ${(currentPath === '/payments') ? `active` : ''}`}>
-                    <i className="bi bi-credit-card-fill"></i>
-                    <span className="ms-2">Payments</span>
-                </Link>
-            </li>
-            <li className="mb-2 nav-item">
-                <Link to="/rewards" className={`w-100 nav-link ${(currentPath === '/rewards' || currentPath === '/add-reward-rule') ? `active` : ''}`}>
-                    <i className="bi bi-trophy-fill"></i>
-                    <span className="ms-2">Rewards</span>
-                </Link>
-            </li>
-            <li className="mb-2 nav-item">
-                <Link to="/latest-offerings" className={`w-100 nav-link ${(currentPath === '/add-offer' || currentPath === '/latest-offerings' || currentPath === '/update-offer') ? `active` : ''}`}>
-                    <i className="bi bi-gift-fill"></i>
-                    <span className="ms-2">Latest Offerings</span>
-                </Link>
-            </li>
-            <li className="mb-2 nav-item">
-                <Link to="/addons" className={`w-100 nav-link ${(currentPath === '/addons' || currentPath === '/create-addons') ? `active` : ''}`}>
-                    <i className="bi bi-bag-plus-fill"></i>
-                    <span className="ms-2">Addons</span>
-                </Link>
-            </li>
-            
+            {IsAgent ?(
+            <>
+                <li className='fs-15 mt-30'><i className={`bi bi-patch-question ${(iconSide === 'right') && 'fs_40'}`}></i> {iconSide === 'right' ? '' : 'Queries'}</li>
+                <li><hr className='horizontal' /></li>
+                <li className="mb-2 nav-item">
+                    <Link to="/customer-queries" className={`w-100 nav-link ${(currentPath === '/customer-queries' || currentPath === '/customer-queries') ? `active` : ''}`}>
+                        <i className="bi bi-person-raised-hand"></i>
+                        <span className="ms-2">Customer Queries</span>
+                    </Link>
+                </li>
+                <li className="mb-2 nav-item">
+                    <Link to="/general-queries" className={`w-100 nav-link ${(currentPath === '/general-queries' || currentPath === '/general-queries') ? `active` : ''}`}>
+                        <i className="bi bi-question-circle-fill"></i>
+                        <span className="ms-2">General Queries</span>
+                    </Link>
+                </li>
+            </>
+            ) :(
+            <>
+                <span className="toggle-sidebar-btn" onMouseOver={() => toggleIcon()} onMouseOut={() => setIcon("bi bi-list")} onClick={toggleSidebar} ><i className={icon}></i></span>
+                <li className="mb-2 nav-item">
+                    <Link to="/stripe" className={`w-100 nav-link ${(currentPath === '/stripe') ? `active` : ''}`}>
+                        <i className="bi bi-plugin"></i>
+                        <span className="ms-2">Stripe Integration</span>
+                    </Link>
+                </li>
+                <li className="mb-2 nav-item">
+                    <Link to="/payments" className={`w-100 nav-link ${(currentPath === '/payments') ? `active` : ''}`}>
+                        <i className="bi bi-credit-card-fill"></i>
+                        <span className="ms-2">Payments</span>
+                    </Link>
+                </li>
+                <li className="mb-2 nav-item">
+                    <Link to="/rewards" className={`w-100 nav-link ${(currentPath === '/rewards' || currentPath === '/add-reward-rule') ? `active` : ''}`}>
+                        <i className="bi bi-trophy-fill"></i>
+                        <span className="ms-2">Rewards</span>
+                    </Link>
+                </li>
+                <li className="mb-2 nav-item">
+                    <Link to="/latest-offerings" className={`w-100 nav-link ${(currentPath === '/add-offer' || currentPath === '/latest-offerings' || currentPath === '/update-offer') ? `active` : ''}`}>
+                        <i className="bi bi-gift-fill"></i>
+                        <span className="ms-2">Latest Offerings</span>
+                    </Link>
+                </li>
+                <li className="mb-2 nav-item">
+                    <Link to="/addons" className={`w-100 nav-link ${(currentPath === '/addons' || currentPath === '/create-addons') ? `active` : ''}`}>
+                        <i className="bi bi-bag-plus-fill"></i>
+                        <span className="ms-2">Addons</span>
+                    </Link>
+                </li>
             
             
             {!IsUser &&
-                <li className="mb-2 nav-item">
+            <>
+            <li className="mb-2 nav-item">
                     <Link to="/push-notifications" className={`w-100 nav-link ${(currentPath === '/edit-notification' || currentPath === '/push-notifications' || currentPath === '/add-notification') ? `active` : ''}`}>
                         <i className="bi bi-bell-fill"></i>
                         <span className="ms-2">Push Notifications</span>
                     </Link>
                 </li>
+            </>
             }
             
 
@@ -88,6 +108,12 @@ export default function Sidebar() {
                 <Link to="/menu-items" className={`w-100 nav-link ${(currentPath === '/menu-items' || currentPath === '/add-menu-items') ? `active` : ''}`}>
                     <i className="bi bi-ui-checks"></i>
                     <span className="ms-2">Kitchen Menu Items</span>
+                </Link>
+            </li>
+            <li className="mb-2 nav-item">
+                <Link to="/menu-slider" className={`w-100 nav-link ${(currentPath === '/menu-slider') ? `active` : ''}`}>
+                    <i className="bi bi-person-badge-fill"></i>
+                    <span className="ms-2">Kitchen Menu Slider</span>
                 </Link>
             </li>
             <li className="mb-2 nav-item">
@@ -140,21 +166,8 @@ export default function Sidebar() {
                 </li>
             </>
             }
-
-            <li className='fs-15 mt-30'><i className={`bi bi-patch-question ${(iconSide === 'right') && 'fs_40'}`}></i> {iconSide === 'right' ? '' : 'Queries'}</li>
-            <li><hr className='horizontal' /></li>
-            <li className="mb-2 nav-item">
-                <Link to="/customer-queries" className={`w-100 nav-link ${(currentPath === '/customer-queries' || currentPath === '/customer-queries') ? `active` : ''}`}>
-                    <i className="bi bi-person-raised-hand"></i>
-                    <span className="ms-2">Customer Queries</span>
-                </Link>
-            </li>
-            <li className="mb-2 nav-item">
-                <Link to="/general-queries" className={`w-100 nav-link ${(currentPath === '/general-queries' || currentPath === '/general-queries') ? `active` : ''}`}>
-                    <i className="bi bi-question-circle-fill"></i>
-                    <span className="ms-2">General Queries</span>
-                </Link>
-            </li>
+            </>
+            )}
         </ul>
     </section>
   )

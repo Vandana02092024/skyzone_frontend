@@ -56,6 +56,8 @@ export const userValidationSchema = yup.object().shape({
   email: yup.string().email("Please enter a valid email address.").required("Email is required."),
   contact: yup.string().matches(/^[0-9]{10}$/, 'Contact number must be exactly 10 digits').required('Contact number is required'),
   // role: yup.string().required("Please select user role."),
+  location: yup.mixed().test( 'is-valid-location', 'Location is required.',
+    (value) => Array.isArray(value) ? value.length > 0 : !!value),
 });
 
 export const userEditValidationSchema = yup.object().shape({
@@ -206,7 +208,7 @@ export const holidayCalendarValidation = yup.object().shape({
 })
 
 export const AddLocationsValidations = yup.object().shape({
-  client_name: yup.string().required("holiday description is required."),
+  client_name: yup.string().required("client name is required."),
   location: yup.string().required("location is required."),
   latitude: yup.string().required("latitude is required."),
   longitude: yup.string().required("longitude is required."),
@@ -223,8 +225,10 @@ export const AddLocationsValidations = yup.object().shape({
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[0-9]/, 'Password must contain at least one number')
     .required('Password is required'),
+    humanity_key:yup.string().required("humanity key is required"),
     version: yup.string().required("version is required."),
     waiver_text: yup.string().required("waiver text is required."),
+    waiver_url: yup.string().required("waiver url is required."),
     topic_name: yup.string().required('topic name is required'),
     customerTimezone: yup.string().required("This field is required."),
     can_access: yup.string().required("This access field is required."),

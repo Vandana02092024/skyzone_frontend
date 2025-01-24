@@ -81,7 +81,6 @@ export default function GeneralQueries(){
     useEffect(()=>{
         setRefresRecords(true);
     }, [currentPage])
-
     return(
         <div className="tab-pane fade active show" id="staffSetting-tab-pane" role="tabpanel" aria-labelledby="staffSetting-tab" tabIndex="0">
             {locationloading 

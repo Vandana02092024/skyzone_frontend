@@ -3,10 +3,11 @@ import GetLocations from '../../hooks/Locations';
 import FormDropdown from '../../components/FormDropdown';
 import { useRequest } from '../../utils/Requests';
 import { Skeleton } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Add from './Add';
 import SweetAlert from '../../components/SweetAlert';
 import Edit from './Edit';
+import { GET_KITCHEN_SLIDER_IMAGES } from '../../utils/Endpoints';
 
 export default function KitchenSlider() {
     const location = useLocation();
@@ -66,13 +67,7 @@ export default function KitchenSlider() {
     useEffect(()=> {
         const getRecords = async () => {
             setLoading(true)
-            const rec = await apiRequest({
-                    // url:MENUITEMS, 
-                    method:"get", 
-                    params: {
-                        location_id:currentLocation,
-                    }
-                });
+            const rec = await apiRequest({url:GET_KITCHEN_SLIDER_IMAGES,   method:"get"});
             setData(rec?.data);
             setLoading(false);
         }
@@ -83,26 +78,33 @@ export default function KitchenSlider() {
         }
     }, [apiRequest, refreshRecords, currentLocation]);
 
+
     const toggleAdd = () => {
         setIsOpen(prev => !prev);
     }
 
+
     const toggleEdit = async (id) => {
-        setLoad(id)
-        var singleRec = {};
-        if(id !== 'undefined'){
+        setLoad(id);
+    
+        if (id !== 'undefined') {
             const user = await apiRequest({
-                // url:FETCHMANAGER,
-                 method:"get", params: {id: id}});
-            singleRec = {
-                id: user?.data.id,
-                image:user?.data.image,
-            }
+                url: GET_KITCHEN_SLIDER_IMAGES,
+                method: "get",
+                params: { id: id },
+            });
+            const singleRec = user?.data?.length > 0 
+                ? {
+                    id: user.data[0].id,
+                    image: user.data[0].imageUrl,
+                }
+                : {};
+            setEditData(singleRec); 
         }
-        setEditData(singleRec)
+    
         setIsOpenId(id);
         setLoad(false);
-    }
+    };
  
   return (
     <>
@@ -134,8 +136,8 @@ export default function KitchenSlider() {
 
                                 </div>
                                 <div className="col-md-3">
-                                    <label className="form-label fs-12 fw-semibold">Location</label>
-                                    {((locationloading) || (!currentLocation)) ? 'Loading...' : locationdt && <FormDropdown onChange={dropDownChange} name="location" options={locationdt.data} default_value={currentLocation} classnm="form-select fs-12" />}
+                                    {/* <label className="form-label fs-12 fw-semibold">Location</label>
+                                    {((locationloading) || (!currentLocation)) ? 'Loading...' : locationdt && <FormDropdown onChange={dropDownChange} name="location" options={locationdt.data} default_value={currentLocation} classnm="form-select fs-12" />} */}
                                 </div>
                             </div>
                         </div>
@@ -143,20 +145,23 @@ export default function KitchenSlider() {
                 </div>
             </div>
             <div className="row align-items-center">
-                <div className="col-md-3 mb-2">
+            {(data?.length > 0 && !load) ? (
+                data?.map((slider) => (
+                <div className="col-md-3 mb-2" key={slider.id}>
                     <div className="card border-0">
                         <div className="card-body hide-overflow">
-                            <img src="https://rivette-img.s3.us-west-2.amazonaws.com/1725516249610-offer.png" alt="test new" class="product-img"></img>
-                            
+                            {slider.imageUrl ? (
+                                <img src={slider.imageUrl} alt={slider.title} className="product-img"/>
+                            ) : (
+                                <img src="./images/no-image.png" alt={slider.title} className="product-img height-100"/>
+                            )}
                             <div className="d-flex align-items-center justify-content-between mb-3">
-                                <button class="product-status product-active">Active</button>
+                                {/* <button class="product-status product-active">Active</button> */}
+                                <div></div>
                                 <div className="d-flex align-items-center">
-                                    <button onClick={() => toggleEdit()} className="me-2 icon edit" data-bs-title="Edit">
+                                    <Link onClick={() => toggleEdit(slider.id)} className="me-2 icon edit" data-bs-title="Edit">
                                         <i className="bi bi-pencil-square"></i>
-                                    </button>
-                                    {/* <button className="me-2 icon edit" data-bs-title="Edit">
-                                        <i className="bi bi-pencil-square"></i>
-                                    </button> */}
+                                    </Link>
                                     <button className="icon delete" data-bs-title="Delete">
                                         <i className="bi bi-trash-fill"></i>
                                     </button>
@@ -165,6 +170,17 @@ export default function KitchenSlider() {
                         </div>
                     </div>
                 </div>
+                ))
+            )
+            : (
+                <div className="row mb-3">
+                    <div className="col-md-12">
+                    {data?.length === 0  && !load ? <>No Data Found!</> :
+                        <Skeleton variant="rectangular" width="100%" height={300} className="skeleton-custom" />
+                    }
+                    </div>
+                </div>
+            )}
             </div>
         </>
         }

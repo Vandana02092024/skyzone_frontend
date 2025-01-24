@@ -31,10 +31,6 @@ export default function UpdateRule() {
   const [disable, setDisable] = useState(false);
   const [inProgress, setInProgress] = useState(false);
 
-  console.log("location.state", location.state);
-
-  console.log("selectedProducts of addrules", selectedProducts);
-
   const handleOfferTypeChange = (e) => {
     setOfferType(e.target.value);
   };
@@ -55,7 +51,6 @@ export default function UpdateRule() {
     const updatedProducts = selectedProducts.filter(
       (product) => product.Pid !== productId
     );
-    console.log("updatedProducts", updatedProducts);
     setSelectedProducts(updatedProducts);
   };
 
@@ -99,8 +94,6 @@ export default function UpdateRule() {
   const clientID = clientId;
   const offeringID = offerId;
 
-  //   console.log('OfferData',OfferData.latest_offer_products);
-
   const [offerType, setOfferType] = useState(OfferData.offer_type);
   const [displayTo, setDisplayTo] = useState(OfferData.display_to);
   const [discountType, setDiscountType] = useState(OfferData.discount_type);
@@ -108,8 +101,6 @@ export default function UpdateRule() {
   // FORM SUBMIT //
   const onSubmit = async (values) => {
     setInProgress(true);
-
-    console.log("values", values);
 
     // return false;
 
@@ -131,8 +122,6 @@ export default function UpdateRule() {
       client_id: clientID,
       selected_products: selectedProducts,
     };
-
-    console.log("formData", formData);
     const response = await apiRequest(
       { url: UPDATEOFFERRULE, method: "POST", data: formData },
       true
@@ -145,7 +134,6 @@ export default function UpdateRule() {
     }
   };
 
-  // console.log('data',data);
 
   // const {
   //   values,
@@ -208,8 +196,6 @@ export default function UpdateRule() {
           id: offerId,
         },
       });
-
-      console.log("offersRec", offersRec?.data);
       // setData(offersRec?.data || []);
 
       setFieldValue("title", offersRec?.data.title)
@@ -227,7 +213,6 @@ export default function UpdateRule() {
       
     };
     getOfferDetail();
-    console.log("Values: ", values);
   }, [setFieldValue]);
 
   const handleFileChange = (file) => {

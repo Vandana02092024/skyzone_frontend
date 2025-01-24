@@ -5,19 +5,19 @@ import { messagePop } from "../../utils/Common";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
 import { imageValidation } from "../../utils/validationSchemas";
+import { ADD_KITCHEN_SLIDER_IMAGES } from "../../utils/Endpoints";
 
-function Add({refreshData, close,currentLocation}) {    
+function Add({refreshData, close}) {    
     const apiRequest = useRequest();
 
     // FORM SUBMIT //
     const onSubmit = async (values, { resetForm }) => {
         const formData = {
             image: values.image,
-            client_id:currentLocation
         }
-      const response = await apiRequest({
-        // url:ADDMANAGER,
-         method:"POST", data: formData});
+        const response = await apiRequest( {
+            url: ADD_KITCHEN_SLIDER_IMAGES, 
+            method: "POST", data: formData}, true);
       if(response){
             messagePop(response);
             refreshData(true);

@@ -71,13 +71,13 @@ export default function AddNotification() {
                 client_ids: selectedLocations.join(",")
             };
 
-            const addRes = await apiRequest({url:ADDNOTIFY, method:"post", data: addNewPushNotfication});
-            if(addRes){
-                resetForm();
-                SweetAlert.success('Success!', 'Notification created successfully.')
-            }else{
-                SweetAlert.error("Error", "There is some issue while adding record.")
-            }
+            // const addRes = await apiRequest({url:ADDNOTIFY, method:"post", data: addNewPushNotfication});
+            // if(addRes){
+            //     resetForm();
+            //     SweetAlert.success('Success!', 'Notification created successfully.')
+            // }else{
+            //     SweetAlert.error("Error", "There is some issue while adding record.")
+            // }
         }
         
     }

@@ -79,8 +79,6 @@ export default function EditNotification() {
                 message: values.message,
                 client_ids: selectedLocations.join(",") // values.allLocations
             };
-
-            console.log("updatePushNotfication", updatePushNotfication)
     
             const response = await apiRequest({url:UPDATENOTIFICATION, method:"post", data: updatePushNotfication});
     
@@ -129,9 +127,6 @@ export default function EditNotification() {
                 setSelectedLocations([]);
         }
     }, [locationloading, locationdt, setFieldValue, notificationData])
-    
-    console.log("notificationData", notificationData)
-    console.log("selectedLocations", selectedLocations)
 
   return (
     <>

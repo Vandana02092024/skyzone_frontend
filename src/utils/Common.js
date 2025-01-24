@@ -102,6 +102,13 @@ export const status = [
   { id: 2, label: "Inactive", value: "0" },
 ];
 
+export const statusChange = [
+  { id: 1, label: "Open", value: "0" },
+  { id: 2, label: "In Progress", value: "1" },
+  { id: 3, label: "Closed", value: "2" }
+  
+]
+
 export const country_type = [
   { id: 1, label: "Canada", value: "0" },
   { id: 2, label: "USA", value: "1" },

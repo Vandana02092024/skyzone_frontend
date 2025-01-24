@@ -160,9 +160,7 @@ export default function ShiftCustomizing({currentLocation, weekNumber, year, fil
                                 </table>
                             </div>
                         </Accordion>
-
                     }
-                        
                     </div>
                 </div>
             </div>

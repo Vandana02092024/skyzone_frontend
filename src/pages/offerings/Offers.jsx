@@ -143,15 +143,8 @@ export default function Offers() {
         }
 
     };
-
     // UPDATE
     const handleStatusUpdate = async (offer_id, status) => {
-
-        if (!offer_id || !status) {
-            console.error("No offerId or status available.");
-            return;
-        }
-
         const title = "Are you sure?";
         const text  = `Are you sure you want to ${(status === '0' ? 'activate' : 'deactivate')} the offer?`;
         const confirm = await SweetAlert.confirm(title, text);

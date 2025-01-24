@@ -32,6 +32,11 @@ export const ADDMENU = MENU + "/add";
 export const UPDATEMENUITEM = MENU + "/update";
 export const DELETEMENUITEM = MENU + "/delete/";
 
+//Kitchen Slider Images
+export const ADD_KITCHEN_SLIDER_IMAGES = MENU +  "/upload_carousal_images";
+export const GET_KITCHEN_SLIDER_IMAGES = MENU + "/fetch_carousal_images";
+export const UPDATE_KITCHEN_SLIDER_IMAGES = MENU + "/update_carousal_images";
+
 const NOTIFICATION = "/push-notifications";
 export const NOTIFICATIONS = NOTIFICATION + "/fetch";
 export const ADDNOTIFY = NOTIFICATION + "/add";
@@ -77,16 +82,30 @@ const AVAILABLE_PRODUCTS = "/product-availability";
 export const GET_PRODUCTS = AVAILABLE_PRODUCTS + "/get-products";
 export const UPDATE_STATUS = AVAILABLE_PRODUCTS + "/update-product-status";
 
+
+//QUERIES 
 export const CUSTOMERQUERIES = "/customers_queries";
 export const GENERALQUERIES = "/general_queries";
+export const CUSTOMERQUERIESREPLY = "/customers_queries/reply";
+export const STATUSCHANGE = "/queries_status_change"
 
-// LOCATION MANAGERS //
+// LOCATION MANAGERS SETUP //
 const MANAGER = "/manager";
 export const LISTMANAGERS = MANAGER + "/fetch";
 export const ADDMANAGER = MANAGER + "/create";
 export const FETCHMANAGER = MANAGER + "/details";
 export const UPDATEMANAGER = MANAGER + "/update";
 export const UPDATEMANAGERSTATUS = MANAGER + "/status_update";
+export const DELETEMANAGER = MANAGER + "/delete/";
+
+//LOCATION MANAGERS
+const LOCATIONMANAGERS = "/locations";
+export const LISTLOCATIONMANAGERS = LOCATIONMANAGERS + "/fetch";
+export const ADDLOCATIONMANAGERS = LOCATIONMANAGERS + "/create";
+export const FETCHLOCATIONMANAGERS = LOCATIONMANAGERS + "/details";
+export const UPDATELOCATIONMANAGER = LOCATIONMANAGERS + "/update";
+export const UPDATESTATUSCHANGE = LOCATIONMANAGERS +"/status_update"
 
 // HOME
 export const FETCH_LOCATIONS = "/fetch-location";
+

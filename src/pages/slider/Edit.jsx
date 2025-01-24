@@ -2,7 +2,7 @@ import { useState } from "react";
 import PopupModal from "../../components/PopupModal"
 import { useFormik } from "formik";
 import { encrypt, messagePop } from '../../utils/Common';
-import { UPDATEMANAGER } from "../../utils/Endpoints";
+import { UPDATE_KITCHEN_SLIDER_IMAGES, UPDATEMANAGER } from "../../utils/Endpoints";
 import SweetAlert from "../../components/SweetAlert";
 import { useRequest } from "../../utils/Requests";
 import { imageValidation, managerValidation } from "../../utils/validationSchemas";
@@ -25,7 +25,7 @@ export default function Edit({id, close, data, refreshData, alertMessage}) {
         }
 
         const response = await apiRequest({
-             method:"POST", data: uUser});
+            url:UPDATE_KITCHEN_SLIDER_IMAGES, method:"POST", data: uUser},true);
 
         if(response){
             setOpen(false)

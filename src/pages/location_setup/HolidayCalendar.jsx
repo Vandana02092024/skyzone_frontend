@@ -79,17 +79,8 @@ const TblBody = ({ data = {}, onDelete, index, title, onChange }) => {
                     {errors.end_time && touched.end_time && <p className='text-danger fs-12'>{errors.end_time}</p>}
                 </td>
                 <td>
-                    <span
-                        className="icon lnk delete"
-                        data-bs-title="Delete"
-                        onClick={() => {
-                            if (values.id > 0) {
-                                onDelete( index, values.id); 
-                            } else {
-                                onDelete(index);
-                            }
-                        }}
-                    >
+                    <span className="icon lnk delete" data-bs-title="Delete" onClick={() => {
+                            if (values.id > 0) { onDelete( index, values.id); } else { onDelete(index); }}}>
                         <i className="bi bi-trash-fill"></i>
                     </span>
                 </td>
@@ -106,9 +97,7 @@ const BreakSection = ({ title, imgPath, data, onAdd, onDelete, onChange }) => {
                     <div className="card-body">
                         <div className="row align-items-center">
                             <div className="col-md-12">
-                                <p className="fs-12 fw-semibold mb-0">
-                                    <img src={imgPath} alt={title} />&nbsp; {title}
-                                </p>
+                                <p className="fs-12 fw-semibold mb-0"> <img src={imgPath} alt={title} />&nbsp; {title}</p>
                             </div>
                         </div>
                         <div className="row align-items-center mt-10">
@@ -124,22 +113,12 @@ const BreakSection = ({ title, imgPath, data, onAdd, onDelete, onChange }) => {
                                                 <th>Opening Time</th>
                                                 <th>Closing Time</th>
                                                 <th>
-                                                    <span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={onAdd}>
-                                                        <i className="bi bi-plus-lg"></i>
-                                                    </span>
+                                                    <span className="me-2 icon lnk edit" data-bs-title="Add New" onClick={onAdd}> <i className="bi bi-plus-lg"></i></span>
                                                 </th>
                                             </tr>
                                         </thead>
                                         {data.map((item, index) => (
-                                            <TblBody
-                                                key={index}
-                                                data={item}
-                                                index={index}
-                                                title={title}
-                                                onDelete={onDelete}
-                                                // onDelete={() => onDelete(index, item.id)}
-                                                onChange={(updatedItem) => onChange(index, updatedItem)}
-                                            />
+                                            <TblBody key={index} data={item} index={index} title={title} onDelete={onDelete} onChange={(updatedItem) => onChange(index, updatedItem)}/>
                                         ))}
                                     </table>
                                 </div>
@@ -158,7 +137,7 @@ export default function Calendar() {
     const [refreshData, setRefreshData] = useState(true);
     const { data: locationdt, loading: locationloading } = GetLocations();
     const currentYear = new Date().getFullYear();
-    const [Year, setYear] = useState(currentYear);
+    const [Year, setYear] = useState(currentYear); 
     const [breakSections, setBreakSections] = useState({
         springBreak: [{ id: 0, holiday_desc: "Spring Break", start_date: "", end_date: "", type: 1, start_time: "", end_time: "", }],
         summerBreak: [{ id: 0, holiday_desc: "Summer Break", start_date: "", end_date: "", type: 1, start_time: "", end_time: "", }],
@@ -231,14 +210,21 @@ export default function Calendar() {
         setRefreshData(true);
     };
 
+    // const updatedSections = {};
+    // Object.keys(breakSections).forEach((section) => {
+    //     if (JSON.stringify(breakSections[section]) !== JSON.stringify(initialBreakSectionsRef.current[section])) {
+    //         updatedSections[section] = breakSections[section];
+    //     }
+    // });
+
     const updatedSections = {};
     Object.keys(breakSections).forEach((section) => {
-        if (JSON.stringify(breakSections[section]) !== JSON.stringify(initialBreakSectionsRef.current[section])) {
+        const isEmptyHolidaySection = section === 'holidays' && breakSections[section].every(item => !item.holiday_desc); 
+        if (JSON.stringify(breakSections[section]) !== JSON.stringify(initialBreakSectionsRef.current[section]) &&
+            !(isEmptyHolidaySection && breakSections[section].length === 1)) {
             updatedSections[section] = breakSections[section];
         }
     });
-    console.log("updatedSections----------------------", updatedSections)
-
     const handleSave = async () => {
         alert("Settings saved successfully!");
         // const data = {client_id: currentLocation, data: updatedSections, year: Year};
@@ -271,14 +257,9 @@ export default function Calendar() {
                 const confirm = await SweetAlert.confirm(title, text);
     
                 if (confirm) {
-                    const deleteOffer = await apiRequest({
-                        // url: OFFER_DELETE,
-                        method: "delete",
-                        params: { id: id },
-                    });
-    
+                    const deleteOffer = await apiRequest({url: "", method: "delete", params: { id: id } });
                     messagePop(deleteOffer);
-    
+
                     if (deleteOffer.status === "success") {
                         setRefreshData(false);
                         const updatedSection = breakSections[section].filter(item => item.id !== id);
@@ -300,10 +281,7 @@ export default function Calendar() {
     
 
     const handleUpdateEntry = (section, index, updatedItem) => {
-        setBreakSections((prev) => ({ ...prev,
-            [section]: prev[section].map((item, i) =>
-                i === index ? { ...item, ...updatedItem } : item
-            ),
+        setBreakSections((prev) => ({ ...prev, [section]: prev[section].map((item, i) =>  i === index ? { ...item, ...updatedItem } : item),
         }));
     };
 
@@ -311,9 +289,7 @@ export default function Calendar() {
         <div>
             <div className="row mb-3">
                 <div className="col-md-12 mb-3 text-md-end">
-                    <button className="ss_btn" onClick={handleSave}>
-                        Save Setting
-                    </button>
+                    <button className="ss_btn" onClick={handleSave}>Save Setting</button>
                 </div>
                  <div className="col-md-12">
                     <div className="card border-0">
@@ -322,9 +298,7 @@ export default function Calendar() {
                                 <div className="col-md-3">
                                     <p className="fs-15 fw-semibold mb-0">Holiday Settings</p>
                                 </div>
-                                <div className="col-md-5">
-                                    &nbsp;
-                                </div>
+                                <div className="col-md-5">&nbsp;</div>
                                 <div className="col-md-3">
                                     <label className="form-label fs-12 fw-semibold">Location</label>
                                         {((locationloading) || (!currentLocation)) ? 'Loading...' : locationdt && <FormDropdown onChange={dropDownChange} name="location" options={locationdt.data} default_value={currentLocation} classnm="form-select fs-12" />}

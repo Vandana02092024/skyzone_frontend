@@ -31,8 +31,8 @@ import List from "./pages/locatoin_user_setup/List";
 import GeneralQueries from "./pages/queries/GeneralQueries";
 import LocationSetup from "./pages/location_setup/LocationSetup";
 import AddLocations from "./pages/location_setup/AddLocations";
-import Queries from "./pages/queries/ViewQueries";
 import KitchenSlider from "./pages/slider/KitchenSlider";
+import EditLocation from "./pages/location_setup/EditLocations";
 
 function App() {
   const humanityRoute = [
@@ -256,10 +256,10 @@ function App() {
       ),
     },
     {
-      path: "/view-queries",
+      path: "/edit-location",
       element: (
-        <Auth title="View Queries">
-          <Queries />
+        <Auth title="Edit Locations">
+          <EditLocation />
         </Auth>
       ),
     },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { encrypt, IsRoleUser, messagePop, timezones, user_roles } from '../../utils/Common';
 import FormDropdown from '../../components/FormDropdown';
 import {useFormik} from 'formik';
@@ -39,8 +39,7 @@ export default function AddUserProfile({refreshData, close}) {
             location: multiSelect ? values.location : [values.location],
             role: values.role,
         }
-
-      const response = await apiRequest({url:ADDUSER, method:"POST", data: nUser});
+      const response = await apiRequest({  url:ADDUSER,method:"POST", data: nUser});
       if(response){
             // SweetAlert.success('Success!', 'User created successfully.')
             messagePop(response);
@@ -65,7 +64,8 @@ export default function AddUserProfile({refreshData, close}) {
             contact: "",
             role: user_roles[0].value,
             timezone: timezones[0].id,
-            location: (!locationloading && locationdt) ? locationdt.data[0].value : 1
+            location: multiSelect ? [] : "",
+            // location: (!locationloading && locationdt) ? locationdt.data[0].value : 1,
         },
         enableReinitialize: true,
         validationSchema: userValidationSchema,
@@ -98,7 +98,8 @@ export default function AddUserProfile({refreshData, close}) {
                 selectedValues.push(options[i].value);
             }
         }
-        setFieldValue('location', selectedValues);
+        setFieldValue('location', multiSelect ? selectedValues : selectedValues[0] || '');
+        // setFieldValue('location', selectedValues);
     }
 
     // CHECK USER EXISTANCE //
@@ -174,9 +175,19 @@ export default function AddUserProfile({refreshData, close}) {
                         {errors.role && touched.role && <p className='text-danger fs_11'>{errors.role}</p>}
                     </div>  
 
-                    <div className="col-sm-6">
+                    {/* <div className="col-sm-6">
                         <label className="fs-12 fw-semibold">Locations<span className='mandatory'>*</span></label>
                         {locationloading ? 'Loading...' : locationdt && <FormDropdown multiselect={multiSelect} onChange={locationDownChange} name="location" options={locationdt.data} classnm="fs-13 mb-3 form-control length_count" />}
+                        {errors.location && touched.location && <p className='text-danger fs_11'>{errors.location}</p>}
+                    </div> */}
+                    <div className="col-sm-6">
+                    <label className="fs-12 fw-semibold"> Locations<span className="mandatory">*</span> </label>
+                    {locationloading ? ('Loading...' ) : (locationdt && (
+                        <FormDropdown
+                            multiselect={multiSelect} onChange={locationDownChange} onBlur={handleBlur} name="location" options={locationdt.data} classnm="fs-13 mb-3 form-control length_count"/>
+                        )
+                    )}
+                    {errors.location && touched.location && (<p className="text-danger fs_11">{errors.location}</p> )}
                     </div>
                 </div>
             </div>

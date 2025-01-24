@@ -48,7 +48,7 @@ const Popup = (props) => {
         </div>
       </>
     );
-  };
+ };
   
   export default Popup;
   

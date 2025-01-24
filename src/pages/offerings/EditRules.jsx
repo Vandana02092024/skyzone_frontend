@@ -172,8 +172,6 @@ export default function EditRule() {
     onSubmit
   });
 
-  // console.log("Values: ", values);
-
   const handleCampaignTypeChange = (e) => {
     setFieldValue("campaignType", e.target.value);
   };

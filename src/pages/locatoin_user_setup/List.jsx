@@ -4,7 +4,7 @@ import FormDropdown from "../../components/FormDropdown";
 import { useLocation } from 'react-router-dom';
 import { Skeleton } from "@mui/material";
 import Add from "./Add";
-import { FETCHMANAGER, LISTMANAGERS, UPDATEMANAGERSTATUS } from "../../utils/Endpoints";
+import { DELETEMANAGER, FETCHMANAGER, LISTMANAGERS, UPDATEMANAGERSTATUS } from "../../utils/Endpoints";
 import { items_per_page, messagePop, status,decrypt } from "../../utils/Common";
 import Pagination from "../../components/Pagination";
 import SweetAlert from "../../components/SweetAlert";
@@ -126,40 +126,33 @@ function List() {
       setLoad(false);
     }
 
-
      // UPDATE
-    const handleStatusUpdate = async (list_id, status) => {
-    if (!list_id || !status) {
-        console.error("No offerId or status available.");
-        return;
-    }
-
+    const handleStatusUpdate = async (id, status) => {
     const title = "Are you sure?";
     const text  = `Are you sure you want to ${(status === 0 ? 'activate' : 'deactivate')} the offer?`;
     const confirm = await SweetAlert.confirm(title, text);
-
-    if(confirm){
-        try {
-        const updateOfferStatus = await apiRequest({
-            url: UPDATEMANAGERSTATUS,
-            method: "post",
-            data: {
-            id: list_id,
-            status: status,
-            },
-        });
-
-        if (updateOfferStatus.data.length > 0) {
-            messagePop(updateOfferStatus.data);
-            setRefresRecords(true);
-        } else {
-            SweetAlert.error("Error!", "Failed to change offering status.");
-        }
-        } catch (error) {
-          SweetAlert.error("Error!", "Error to change offering status: " + error.message);
-        }
-      }
+    
+      if(confirm){
+      const updateOfferStatus = await apiRequest({
+        url: `${UPDATEMANAGERSTATUS}?id=${id}`,
+          // url: UPDATEMANAGERSTATUS + id,
+          method: "post",
+      });
+      setRefresRecords(true);
+      messagePop(updateOfferStatus)
     }
+   }
+       // DELETE
+      const handleDelete = async (id) => {
+      const title = "Are you sure?";
+      const text  = "Are you sure you want to delete this record?";
+      const confirm = await SweetAlert.confirm(title, text);
+      if(confirm){
+          const deleteOffer = await apiRequest({url: DELETEMANAGER + id, method: "delete",});
+          messagePop(deleteOffer);
+          if(deleteOffer.status === 'success'){setRefresRecords(true); }
+      }
+    };
 
   return (
     <div>
@@ -236,12 +229,15 @@ function List() {
                           {list.status === 1 ? "Active" : "Inactive"}
                       </Link>
                       <div className="d-flex align-items-center">
-                          <button onClick={() => toggleEdit(list.id)} className="me-2 icon edit" data-bs-title="Edit">
+                          <Link onClick={() => toggleEdit(list.id)} className="me-2 icon edit" data-bs-title="Edit">
                               <i className="bi bi-pencil-square"></i>
-                          </button>
-                        <a className="icon delete" data-bs-title="Delete" href="/latest-offerings">
+                          </Link>
+                          <Link className="icon delete" data-bs-title="Delete" onClick={() => handleDelete(list.id)}>
+                              <i className="bi bi-trash-fill"></i>
+                          </Link>
+                        {/* <a className="icon delete" data-bs-title="Delete" href="/latest-offerings">
                           <i className="bi bi-trash-fill"></i>
-                        </a>
+                        </a> */}
                       </div>
                     </div>
                     <div className="product_detail">

@@ -33,6 +33,7 @@ import LocationSetup from "./pages/location_setup/LocationSetup";
 import AddLocations from "./pages/location_setup/AddLocations";
 import KitchenSlider from "./pages/slider/KitchenSlider";
 import EditLocation from "./pages/location_setup/EditLocations";
+import CustomerQueries1 from "./pages/queries/CustomerQueries copy";
 
 function App() {
   const humanityRoute = [
@@ -98,7 +99,7 @@ function App() {
       path: "/customer-queries",
       element: (
         <Auth title="Customer Queries">
-          <CustomerQueries />
+          <CustomerQueries1 />
         </Auth>
       ),
     },

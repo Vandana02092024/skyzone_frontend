@@ -110,9 +110,8 @@ export default function AddLocations() {
     
   return (
     <>
-    
         <div className="text-end mb-3">              
-            <Link to="/push-notifications" type="button" className="ss_btn">
+            <Link to="/location-setup" type="button" className="ss_btn">
                 <i className="bi bi-arrow-left"></i>
                 Back
             </Link>
@@ -242,7 +241,7 @@ export default function AddLocations() {
                                             {(errors.waiver_text && touched.waiver_text) && <p className='fs-12 text-danger'>{errors.waiver_text}</p>}
                                     </div>
                                     <div className="modal-footer">
-                                        <button type="button" className="ss_btn" onClick={handleSubmit}  value="Submit" >Add Notification</button>
+                                        <button type="button" className="ss_btn" onClick={handleSubmit}  value="Submit" >Add Locations</button>
                                     </div>
                                 </div>
 
@@ -251,8 +250,7 @@ export default function AddLocations() {
                     </div>
                 </div>
             </div>
-        </div>
-        
+        </div>   
     </>
   )
 }

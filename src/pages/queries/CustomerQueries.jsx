@@ -26,8 +26,12 @@ export default function CustomerQueries() {
     const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
     const [replyEditors, setReplyEditors] = useState({});
     const [expandMessages, setExpandMessages] = useState(false);
-    const [currentStatus, setCurrentStatus] = useState(0);
-    const [statusMap, setStatusMap] = useState({});
+    const [currentStatus, setCurrentStatus] = useState();
+    const [selectedStatus, setSelectedStatus] = useState(); 
+    const [currentPage, setCurrentPage] = useState(1);  // PAGE AND ITEMS SETTINGS //
+    const [search, setSearch] = useState(null); // SEARCH USERS //
+    const [pendingStatus, setPendingStatus] = useState(null); // New status value before confirmation
+    const [isConfirming, setIsConfirming] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -39,14 +43,7 @@ export default function CustomerQueries() {
         setReplyEditors((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    // PAGE AND ITEMS SETTINGS //
-    const [currentPage, setCurrentPage] = useState(1);
-
-    // SEARCH USERS //
-    const [search, setSearch] = useState(null);
-
-    // DROPDOWNS CHANGE //
-    const dropDownChange = (e) => {
+    const dropDownChange = (e) => {              // DROPDOWNS CHANGE //
         setCurrentLocation(e.target.value);
         setRefresRecords(true);
     }
@@ -57,11 +54,7 @@ export default function CustomerQueries() {
     }
 
     const onSubmit = async (values, { resetForm }) => {
-        const formData = {
-            message: values.reply,
-            query_id: values.id, 
-            customer_id: values.customer_id,
-        };
+        const formData = {  message: values.reply, query_id: values.id, customer_id: values.customer_id,};
         const response = await apiRequest({url: CUSTOMERQUERIESREPLY, method: "POST", data: formData});
         if (response) {
             messagePop(response);
@@ -85,15 +78,13 @@ export default function CustomerQueries() {
             setLoading(true)
             const client_id = (currentLocation) ? {client_id : currentLocation} : "";
             const data = await apiRequest({url:CUSTOMERQUERIES, method:"get", 
-                params: {page: currentPage,  items_per_page: items_per_page, search: search, ...client_id,
-                    fromDate:fromDate,toDate:toDate,status: currentStatus,
-                }});
+                params: {page: currentPage,  items_per_page: items_per_page, search: search, ...client_id, fromDate:fromDate,toDate:toDate,status: currentStatus,}});
             setCurrentPage(data?.data?.page);
             setTotalPages(data?.data?.total_pages);
             setData(data?.data?.data);
-            setLoading(false)    
+            setLoading(false);
+            setSelectedStatus(data?.data?.status)  
         }
-
         if(RefresRecords){
             setRefresRecords(false)
             getCustomerQueries();
@@ -116,63 +107,52 @@ export default function CustomerQueries() {
         setRefresRecords(true);
     };
 
-    // const dropDownChangeStatus = (e) => {
-    //     setCurrentStatus(e.target.value);
-    //     setRefresRecords(true);
+    // const handleStatusUpdate = async (id, status) => {
+    //     const title = "Are you sure?";
+    //     const text = "Are you sure you want to change the status?";
+    //     const confirm = await SweetAlert.confirm(title, text);
+    //     if (confirm) {
+    //         const updateOfferStatus = await apiRequest({ url: STATUSCHANGE, method: "post",data: { id: id, status: status }, });
+    //         setSelectedStatus(status); 
+    //         messagePop(updateOfferStatus);
+    //     } else { 
+    //         setSelectedStatus(currentStatus);
+    //     }
     // };
 
-//     const handleStatusUpdate = async (id, status) => {
-//         const title = "Are you sure?";
-//         const text = "Are you sure you want to change the status";
-//         const confirm = await SweetAlert.confirm(title, text);
-//         if(confirm){
-//             const updateOfferStatus = await apiRequest({
-//                 url:STATUSCHANGE,
-//                 method: "post",
-//                 data: {
-//                     id: id,
-//                     status: status}
-//             });
-//             setRefresRecords(true);
-//             messagePop(updateOfferStatus)
-//         }
-//         else {
-//             setRefresRecords(false);
-//         }
-//     };
+    // const dropDownChangeStatus = async (event, queryId) => {
+    //     event.preventDefault();
+    //     const newStatus = event.target.value;
+    //     setSelectedStatus(newStatus); 
+    //     await handleStatusUpdate(queryId, newStatus);
+    // };
 
-//    const dropDownChangeStatus = (e, queryId) => {
-//         const newStatus = e.target.value;
-//         setCurrentStatus(newStatus)
-//         handleStatusUpdate(queryId, newStatus);
-//     };
-
-    const handleStatusUpdate = async (id, status, previousStatus) => {
+    const handleStatusUpdate = async (id, status) => {
+        console.log("id",id);
+        console.log("status............",status)
         const title = "Are you sure?";
         const text = "Are you sure you want to change the status?";
         const confirm = await SweetAlert.confirm(title, text);
-
         if (confirm) {
-            const updateOfferStatus = await apiRequest({
-                url: STATUSCHANGE,
-                method: "post",
-                data: { id: id, status: status },
-            });
-            setRefresRecords(true);
+            const updateOfferStatus = await apiRequest({ url: STATUSCHANGE, method: "post",data: { id: id, status: status }, });
+            setCurrentStatus(status);
+
+            // setSelectedStatus(status); 
             messagePop(updateOfferStatus);
-            setCurrentStatus(status); 
-        } else {
-            setCurrentStatus(previousStatus); 
-            // setRefresRecords(false);
+        } else { 
+            setPendingStatus(null);
+            // setSelectedStatus(currentStatus);
         }
+        setIsConfirming(false);
     };
 
-    const dropDownChangeStatus = async (e, queryId) => {
-        const newStatus = e.target.value;
-        const previousStatus = currentStatus;
-        setCurrentStatus(previousStatus); 
-        await handleStatusUpdate(queryId, newStatus, previousStatus);
-        setRefresRecords(true);
+    const dropDownChangeStatus = async (event, queryId) => {
+        event.preventDefault();
+        const newStatus = event.target.value;
+        setPendingStatus(newStatus);
+        setIsConfirming(true);
+        // setSelectedStatus(newStatus); 
+        await handleStatusUpdate(queryId, newStatus);
     };
 
     return (
@@ -219,21 +199,14 @@ export default function CustomerQueries() {
                                 <div className="me-3">
                                     <label htmlFor="fromDate" className="form-label">From Date</label>
                                     <div>
-                                        <DatePicker
-                                            value={fromDate}
-                                            onChange={(date) => setFromDate(date)}
-                                            minDate={false} name="startDate"
-                                        />
+                                        <DatePicker value={fromDate} onChange={(date) => setFromDate(date)} minDate={false} name="startDate"/>
+                                        <DatePicker value={fromDate} onChange={(date) => setFromDate(date)} minDate={false} name="startDate"/>
                                     </div>
                                 </div>
                                 <div className="me-3">
                                     <label htmlFor="toDate" className="form-label"> To Date </label>
                                     <div>
-                                        <DatePicker
-                                            value={toDate}
-                                            onChange={(date) => setToDate(date)}
-                                            minDate={false} name="startDate"
-                                        />
+                                        <DatePicker value={toDate} onChange={(date) => setToDate(date)} minDate={false} name="startDate"/>
                                     </div>
                                 </div>
                                 <div className="me-3 mt-3 pt-md-1">
@@ -265,29 +238,23 @@ export default function CustomerQueries() {
                                                             <tr>
                                                                 <td> <i className="bi bi-question-circle-fill"></i> </td>
                                                                 <td className="wrap-text pd-15 fs-15">{query.message}</td>
-                                                                {/* <td>Open</td> */}
                                                                 <td>
-                                                                    {/* <FormDropdown
-                                                                        onChange={dropDownChangeStatus}
-                                                                        name="status"
-                                                                        options={statusChange}
-                                                                        default_value={currentStatus || "open"}
-                                                                        classnm="form-select fs-12"
-                                                                    /> */}
-                                                                     {/* <FormDropdown
-                                                                        onChange={(e) => dropDownChangeStatus(e, query.id)}
-                                                                        name="status"
-                                                                        options={statusChange}
-                                                                        default_value={currentStatus}
-                                                                        classnm="form-select fs-12"
-                                                                    /> */}
                                                                     <FormDropdown
                                                                         onChange={(e) => dropDownChangeStatus(e, query.id)}
-                                                                        name="status"
+                                                                        name="status" classnm="form-select fs-12"
                                                                         options={statusChange}
-                                                                        value={currentStatus} 
-                                                                        classnm="form-select fs-12"
-                                                                    />;
+                                                                        default_value={selectedStatus}
+                                                                    />
+                                                                    {/* <td>
+                                                                        <FormDropdown
+                                                                            onChange={(e) => dropDownChangeStatus(e, query.id)}
+                                                                            name="status" classnm="form-select fs-12"
+                                                                            // options={statusChange}
+                                                                            // default_value={query.status}
+                                                                            options={statusChange} 
+                                                                            default_value={pendingStatus || currentStatus}
+                                                                        />
+                                                                    </td> */}
                                                                 </td>
                                                             </tr>
                                                             <tr>
@@ -305,9 +272,7 @@ export default function CustomerQueries() {
                                                                     <b>Email: </b>{email} <br />
                                                                     <b>Phone: </b>{phone}
                                                                 </td>
-                                                                <td>
-
-                                                                </td>
+                                                                <td> </td>
                                                             </tr>
                                                             <tr>
                                                                 <td colSpan={3}>
@@ -325,11 +290,10 @@ export default function CustomerQueries() {
                                                                                     {query.customer_queries_replies.map((msg, index) => (
                                                                                         <div key={index}>
                                                                                             <div className="d-flex align-items-center justify-content-between">
-                                                                                                <p className="mb-0">
-                                                                                                  
-                                                                                                    <span dangerouslySetInnerHTML={{ __html: msg.message }} />
-                                                                                                </p>
-                                                                                                <span>{moment(msg.created_at).format("D MMM, YYYY, h:mm A")}</span>
+                                                                                                <div>
+                                                                                                    <b className="mb-0">Message</b><p className="mb-0"> <span dangerouslySetInnerHTML={{ __html: msg.message }} /> </p> 
+                                                                                                </div>
+                                                                                                <span>{moment(msg.created_at).format(" MMM D, YYYY, h:mm A")}</span>
                                                                                             </div>
                                                                                             <hr />
                                                                                         </div>
@@ -338,9 +302,12 @@ export default function CustomerQueries() {
                                                                             )}
                                                                         </div>
                                                                     )}
-                                                                    <i  data-toggle="tooltip" data-placement="top" title="Reply"
+                                                                    <i data-toggle="tooltip" data-placement="top" title={replyEditors[query.id] ? "Close" : "Reply"}
                                                                         className={`bi ${replyEditors[query.id] ? 'bi bi-x-circle-fill bg-color font-size' : 'bi-arrow-return-left font-size'} float-end`}
-                                                                        onClick={() => handleReplyToggle(query.id)} ></i>
+                                                                        onClick={() => handleReplyToggle(query.id)}
+                                                                        >
+                                                                    </i>
+
                                                                 </td>
                                                             </tr>
                                                             {replyEditors[query.id] && (
@@ -351,9 +318,7 @@ export default function CustomerQueries() {
                                                                             height={200} name="reply" value={values.reply}
                                                                             onEditorChange={(content) => setFieldValue("reply", content)}
                                                                         />
-                                                                        {(errors.reply && touched.reply) && (
-                                                                            <p className="fs-12 text-danger">{errors.reply}</p>
-                                                                        )}
+                                                                        {(errors.reply && touched.reply) && (<p className="fs-12 text-danger">{errors.reply}</p>)}
                                                                         <button
                                                                             type="button" className="ss_btn text-right mt-2 mb-2 float-end"
                                                                             onClick={() => {
@@ -376,7 +341,7 @@ export default function CustomerQueries() {
                                 </>
                             )}
                             {totalPages > 0 && (
-                                <Pagination totalPages={totalPages}currentPage={currentPage} setCurrentPage={setCurrentPage} refreshRecords={setRefresRecords} />
+                                <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} refreshRecords={setRefresRecords} />
                             )}
                         </div>
                     </div>

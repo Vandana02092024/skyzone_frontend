@@ -43,22 +43,30 @@ const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecor
     const email = decrypt(query?.mobile_customer?.email);
     const phone = decrypt(query?.mobile_customer?.phone);
 
-    const handleStatusChange = async (newStatus, queryId) => {
+    const handleToggleChange = async (currentStatus, queryId) => {
+        const newStatus = currentStatus === 0 ? 1 : 0; 
         const title = "Are you sure?";
         const text = "Are you sure you want to change the status?";
+    
         const confirm = await SweetAlert.confirm(title, text);
         if (confirm) {
             try {
-                const response = await apiRequest({url: STATUSCHANGE,method: "POST",  data: { status: newStatus, id: queryId } });
+                const response = await apiRequest({
+                    url: STATUSCHANGE,
+                    method: "POST",
+                    data: { status: newStatus, id: queryId }
+                });
+    
                 if (response) {
                     messagePop(response);
-                    setRefresRecords(true); 
+                    setRefresRecords(true);
                 }
             } catch (error) {
-                // Swal.fire("Error", "Failed to update status. Please try again.", "error");
+                SweetAlert.alert("Error", "Failed to update status. Please try again.", "error");
             }
         }
     };
+    
 
     return (
         <Accordion addClass="mt-10" id={query.id} title={query.subject} key={query.id} infoTitle={moment(query.created_at).format("D MMM, YYYY")}>
@@ -76,18 +84,15 @@ const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecor
                             <td> <i className="bi bi-question-circle-fill"></i> </td>
                             <td className="wrap-text pd-15 fs-15">{query.message}</td>
                             <td>
-                                <div className='d-flex align-items-center justify-content-between'>
-                                    <label>
-                                        <input type="radio" name="Open" value="0" checked={query.status === 0} onChange={() => handleStatusChange(0, query.id)} />
-                                        Open
-                                    </label>
-                                    <label>
-                                        <input  type="radio" name="In Progress"  value="1" checked={query.status === 1} onChange={() => handleStatusChange(1, query.id)}/>
-                                        In Progress
-                                    </label>
-                                    <label>
-                                        <input  type="radio" name="Closed" value="2"  checked={query.status === 2} onChange={() => handleStatusChange(2, query.id)} />
-                                        Close
+                                <div className='d-flex align-items-center'>
+                                    <span className="me-2">{query.status === 0 ? "Open" : "Closed"}</span>
+                                    <label className="switch">
+                                        <input 
+                                            type="checkbox" 
+                                            checked={query.status === 1} 
+                                            onChange={() => handleToggleChange(query.status, query.id)} 
+                                        />
+                                        <span className="slider round"></span>
                                     </label>
                                 </div>
                             </td>

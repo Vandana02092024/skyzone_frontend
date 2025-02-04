@@ -52,7 +52,7 @@ export default function EditLocation() {
           can_access:values.can_access,
           country_type:values.country_type,
           website:values.website,
-          weiver_url:values.weiver_url
+          weiver_url:values.weiver_url,
           
         };
         const response = await apiRequest( {url: UPDATELOCATIONMANAGER, method: "POST", data: formData});
@@ -69,7 +69,7 @@ export default function EditLocation() {
             latitude:locationData?.latitude,
             longitude:locationData?.longitude,
             address:locationData?.address,
-            client_code:locationData?.client_code,
+            client_code:locationData?.Client_Code,
             client_email:locationData?.client_email,
             order_email:locationData?.order_email,
             reply_to:locationData?.reply_to,
@@ -82,13 +82,10 @@ export default function EditLocation() {
             waiver_text:locationData?.waiver_text,
             phone_number:locationData?.phone_number,
             topic_name:locationData?.topic_name,
-            // customerTimezone: timezones[0].value,
-            // can_access:can_access[0].value,
-            // country_type:country_type[0].value,
-            customerTimezone:locationData?.client_timezone,
-            can_access:locationData?.can_access,
-            country_type:locationData?.country_tYPE,
-            weiver_url:locationData?.weiver_url
+            weiver_url:locationData?.weiver_url,
+         customerTimezone: locationData?.client_timezone ?? (timezones.length > 0 ? timezones[0].value : ""),
+        can_access: locationData?.can_access ?? (can_access.length > 0 ? can_access[0].value : ""),
+        country_type: locationData?.country_type ?? (country_type.length > 0 ? country_type[0].value : ""),
         },
         enableReinitialize: true,
         onSubmit

@@ -5,7 +5,7 @@ import FormDropdown from '../../components/FormDropdown.jsx';
 import { can_access, country_type, messagePop, timeA, timeH, timeS, timezones } from '../../utils/Common.js';
 import DatePicker from '../../components/DatePicker.jsx';
 import { useFormik } from 'formik';
-import { AddLocationsValidations, check_location_validation, pushNotificationSchema } from '../../utils/validationSchemas.jsx';
+import { AddLocationsValidations, check_location_validation, pushNotificationSchema, validationSchema } from '../../utils/validationSchemas.jsx';
 import { ADDLOCATIONMANAGERS, ADDNOTIFY } from '../../utils/Endpoints.js';
 import SweetAlert from '../../components/SweetAlert';
 import { useRequest } from '../../utils/Requests.js';
@@ -75,7 +75,7 @@ export default function AddLocations() {
     }
         
 
-    const {values, errors, touched, handleBlur, handleChange, setFieldValue, handleSubmit, resetForm} = useFormik({
+    const {values, errors, touched, handleBlur, handleChange, setFieldValue, handleSubmit, resetForm,setFieldTouched} = useFormik({
           initialValues:{
             client_name:"",
             location:"",
@@ -100,13 +100,15 @@ export default function AddLocations() {
             country_type:country_type[0].value,
             weiver_url:""
         },
+        validationSchema:validationSchema,
         onSubmit
     });
     
     const dropDownChange = (e) => {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
         setFieldValue(name, value);
-    }
+    };
+    
     
   return (
     <>

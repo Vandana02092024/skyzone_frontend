@@ -49,7 +49,7 @@ function Add({refreshData, close}) {
       };
 
   return (
-    <PopupModal open={open} setOpen={handleClose} handleSubmit={handleSubmit} size="md">
+    <PopupModal title="Add Slider Image" open={open} setOpen={handleClose} handleSubmit={handleSubmit} size="md">
         <div className="col-sm-12" id="dis_list"> 
             <div className="form-group row">
                 <div className="col-sm-12">

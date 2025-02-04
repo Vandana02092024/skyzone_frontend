@@ -56,7 +56,7 @@ export default function Edit({id, close, data, refreshData, alertMessage}) {
 
 
   return (
-    <PopupModal open={open} setOpen={handleClose} handleSubmit={handleSubmit} size="md">
+    <PopupModal title="Edit Manager" open={open} setOpen={handleClose} handleSubmit={handleSubmit} size="md">
         <div className="col-sm-12" id="dis_list"> 
             <div className="form-group row">
                 <div className="col-sm-12">

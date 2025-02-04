@@ -14,7 +14,9 @@ import { sendReply } from '../../utils/validationSchemas.jsx';
 import { useFormik } from 'formik';
 import SweetAlert from '../../components/SweetAlert.jsx';
 
-const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecords}) => {
+const RenderQueryRow = ({query, expandMessages, setExpandMessages}) => {
+    const [queryStatus, setQueryStatus] = useState(query.status)  
+
     const apiRequest = useRequest();
     const [replyEditors, setReplyEditors] = useState({});
 
@@ -40,33 +42,31 @@ const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecor
         validationSchema: sendReply,
         onSubmit,
     });
+
     const email = decrypt(query?.mobile_customer?.email);
     const phone = decrypt(query?.mobile_customer?.phone);
 
-    const handleToggleChange = async (currentStatus, queryId) => {
-        const newStatus = currentStatus === 0 ? 1 : 0; 
+    const handleStatusChange = async (event, queryId, currentStatus) => {
+        const newStatus = event.target.value;
+        if (newStatus === currentStatus) return; 
+        setQueryStatus(currentStatus);
+
         const title = "Are you sure?";
         const text = "Are you sure you want to change the status?";
-    
         const confirm = await SweetAlert.confirm(title, text);
+        
         if (confirm) {
             try {
-                const response = await apiRequest({
-                    url: STATUSCHANGE,
-                    method: "POST",
-                    data: { status: newStatus, id: queryId }
-                });
-    
+                const response = await apiRequest({ url: STATUSCHANGE,method: "POST",data: { status: newStatus, id: queryId }});
                 if (response) {
                     messagePop(response);
-                    setRefresRecords(true);
+                    setQueryStatus(newStatus);
                 }
             } catch (error) {
                 SweetAlert.alert("Error", "Failed to update status. Please try again.", "error");
             }
         }
     };
-    
 
     return (
         <Accordion addClass="mt-10" id={query.id} title={query.subject} key={query.id} infoTitle={moment(query.created_at).format("D MMM, YYYY")}>
@@ -81,19 +81,11 @@ const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecor
                     </thead>
                     <tbody>
                         <tr>
-                            <td> <i className="bi bi-question-circle-fill"></i> </td>
+                            <td><i className="bi bi-question-circle-fill"></i></td>
                             <td className="wrap-text pd-15 fs-15">{query.message}</td>
                             <td>
                                 <div className='d-flex align-items-center'>
-                                    <span className="me-2">{query.status === 0 ? "Open" : "Closed"}</span>
-                                    <label className="switch">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={query.status === 1} 
-                                            onChange={() => handleToggleChange(query.status, query.id)} 
-                                        />
-                                        <span className="slider round"></span>
-                                    </label>
+                                    <FormDropdown onChange={(e) => handleStatusChange(e, query.id, queryStatus)} value={queryStatus} options={statusChange} classnm="fs-13 mb-3 form-control length_count" />
                                 </div>
                             </td>
                         </tr>
@@ -150,11 +142,10 @@ const RenderQueryRow = ({query, expandMessages, setExpandMessages,setRefresRecor
                         {replyEditors[query.id] && (
                             <tr>
                                 <td colSpan={3}>
-                                    <form >
+                                    <form>
                                         <TinyMCEEditor
                                             height={200} name="reply" value={values.reply}
-                                            onEditorChange={(content) => setFieldValue("reply", content)}
-                                        />
+                                            onEditorChange={(content) => setFieldValue("reply", content)} />
                                         {(errors.reply && touched.reply) && (<p className="fs-12 text-danger">{errors.reply}</p>)}
                                         <button
                                             type="button" className="ss_btn text-right mt-2 mb-2 float-end"
@@ -241,8 +232,7 @@ export default function CustomerQueries1() {
     
     return (
         <div className="tab-pane fade active show" id="staffSetting-tab-pane" role="tabpanel" aria-labelledby="staffSetting-tab" tabIndex="0">
-            {locationloading
-                ?
+            {locationloading ?
                 <>
                     <div className="text-end mb-3">
                         <Skeleton variant="rectangular" width="100%" height={80} className="skeleton-custom text-end" />

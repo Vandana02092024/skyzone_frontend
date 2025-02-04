@@ -17,14 +17,10 @@ export default function AddRewardRule() {
     const [currentLocationName, setCurrentLocationName] = useState("");
 
     const apiRequest = useRequest();
-    
 
-    // SEARCH USERS //
-    const [search, setSearch] = useState(null);
+    const [search, setSearch] = useState(null);     // SEARCH USERS //
 
-
-    // ONLOAD //
-    useEffect(() => {
+    useEffect(() => {                               // ONLOAD //
         if(location.state && location.state.id)
         {
             setCurrentLocation(location.state?.id);
@@ -35,8 +31,7 @@ export default function AddRewardRule() {
           }
     }, [location.state])
 
-    // FETCH ONLOAD //
-    useEffect(()=> {
+    useEffect(()=> {                                  // FETCH ONLOAD //
         const getRewards = async () => {
             const rewardsRec = await apiRequest({
                     url:NONREWARDS, 
@@ -106,8 +101,7 @@ export default function AddRewardRule() {
       
 
         <div className="accordion mt-3" id="accordionWithIcon">
-        {(loading) || (!currentLocation)
-        ? 
+        {(loading) || (!currentLocation) ? 
             <Skeleton variant="rectangular" width="100%" height={400} className="skeleton-custom" />
         : 
         <>
@@ -118,7 +112,6 @@ export default function AddRewardRule() {
                             <table className="table table-bordered RjTable">
                                 <thead>
                                     <tr key={product.Pid}>
-                                    
                                         <th>Product</th>
                                         <th>Item</th>
                                         <th>Title</th>

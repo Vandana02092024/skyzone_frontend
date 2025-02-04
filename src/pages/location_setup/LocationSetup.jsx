@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useRequest } from '../../utils/Requests';
-import { items_per_page, messagePop, timezones} from '../../utils/Common';
-import Moment from 'moment';
-import DOMPurify from 'dompurify';
-import { Tooltip } from '@mui/material';
+import { items_per_page, messagePop} from '../../utils/Common';
 import Datatable from '../../components/Datatable';
 import { Link, useNavigate } from 'react-router-dom';
 import SweetAlert from '../../components/SweetAlert';
-import GetLocations from '../../hooks/Locations';
 import { FETCHLOCATIONMANAGERS, LISTLOCATIONMANAGERS, UPDATESTATUSCHANGE } from '../../utils/Endpoints';
 
 export default function LocationSetup() {
@@ -16,7 +12,6 @@ export default function LocationSetup() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState(null);
     const [editLoader, setEditLoader] = useState(false);
-    const { data: locationdt } = GetLocations();
     const[status,setStatus] = useState(null);
    
 
@@ -83,8 +78,7 @@ export default function LocationSetup() {
                 ...row,
                 id: row.client_id || index,
               }));
-          
-              setData({ ...data, data: { ...data.data, listing: rowsWithId } });
+            setData({ ...data, data: { ...data.data, listing: rowsWithId } });
             setCurrentPage(data?.data?.page);
             setTotalPages(data?.data?.total_pages);
             setStatus(data?.data?.status)
@@ -97,6 +91,7 @@ export default function LocationSetup() {
             getRecords();
         }
     }, [refreshRecords, apiRequest, currentPage, itemsPerPage, search,status]);
+
 
     useEffect(()=>{
         setRefreshRecords(true);
